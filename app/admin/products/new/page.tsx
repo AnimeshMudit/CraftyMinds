@@ -1,0 +1,300 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useToast } from "@/components/admin/Toast";
+import { ArrowLeft, Upload, Loader2 } from "lucide-react";
+
+export default function AddProductPage() {
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState<"mdf" | "pouch" | "magnet">("mdf");
+  const [featured, setFeatured] = useState(false);
+  const [customizable, setCustomizable] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !description || !price || !category) {
+      showToast("Please fill in all required fields.", "error");
+      return;
+    }
+
+    if (!imageFile) {
+      showToast("Please select a product image to upload.", "error");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // 1. Upload image to Supabase Storage via backend API
+      showToast("Uploading product image...", "info");
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", imageFile);
+
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadFormData,
+      });
+
+      if (!uploadRes.ok) {
+        const uploadErr = await uploadRes.json().catch(() => ({}));
+        throw new Error(uploadErr.error || "Failed to upload image.");
+      }
+
+      const { url: imageUrl } = await uploadRes.json();
+
+      // 2. Save product to Supabase Database via backend API
+      const productData = {
+        title,
+        description,
+        price: Number(price),
+        category,
+        image_url: imageUrl,
+        featured,
+        customizable,
+      };
+
+      const productRes = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (!productRes.ok) {
+        const productErr = await productRes.json().catch(() => ({}));
+        throw new Error(productErr.error || "Failed to create product.");
+      }
+
+      showToast("Product created successfully!", "success");
+      
+      // Redirect back to products view
+      router.push("/admin/products");
+      router.refresh();
+    } catch (error: unknown) {
+      console.error(error);
+      showToast(error instanceof Error ? error.message : "Failed to create product.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-8">
+      {/* Header Back Button */}
+      <div>
+        <Link
+          href="/admin/products"
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-wider font-semibold text-slate-500 hover:text-accent transition-colors"
+        >
+          <ArrowLeft size={16} />
+          <span>Back to products</span>
+        </Link>
+        <h1 className="font-serif text-3xl font-semibold tracking-wide text-slate-900 mt-4">Add Product</h1>
+        <p className="text-sm font-sans text-slate-500 font-light mt-1">
+          Create a new handmade creation in the store inventory.
+        </p>
+      </div>
+
+      {/* Form Container */}
+      <form onSubmit={handleSubmit} className="bg-white border border-slate-200/80 rounded-2xl p-6 lg:p-8 shadow-xs space-y-8">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column: Details */}
+          <div className="space-y-6">
+            {/* Title */}
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-xs uppercase tracking-wider font-semibold text-slate-500">
+                Product Name *
+              </label>
+              <input
+                id="title"
+                type="text"
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Ganesh MDF Welcome Board"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-hidden focus:border-accent font-sans text-sm text-slate-800 transition-colors"
+              />
+            </div>
+
+            {/* Category */}
+            <div className="space-y-2">
+              <label htmlFor="category" className="text-xs uppercase tracking-wider font-semibold text-slate-500">
+                Category *
+              </label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value as "mdf" | "pouch" | "magnet")}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-hidden focus:border-accent font-sans text-sm text-slate-800 transition-colors bg-white"
+              >
+                <option value="mdf">MDF Board Art</option>
+                <option value="pouch">Hand-painted Pouch</option>
+                <option value="magnet">Fridge Magnet</option>
+              </select>
+            </div>
+
+            {/* Price */}
+            <div className="space-y-2">
+              <label htmlFor="price" className="text-xs uppercase tracking-wider font-semibold text-slate-500">
+                Price (INR) *
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-3 text-slate-400 font-medium text-sm">₹</span>
+                <input
+                  id="price"
+                  type="number"
+                  required
+                  min="0"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="e.g. 850"
+                  className="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-hidden focus:border-accent font-sans text-sm text-slate-800 transition-colors"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Image Upload & Preview */}
+          <div className="space-y-6 flex flex-col">
+            <span className="text-xs uppercase tracking-wider font-semibold text-slate-500">
+              Product Image *
+            </span>
+            <div className="flex-grow flex flex-col justify-center items-center">
+              {imagePreview ? (
+                <div className="relative w-full aspect-square max-w-[240px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imagePreview}
+                    alt="Upload preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <label
+                    htmlFor="image-upload"
+                    className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold uppercase tracking-wider cursor-pointer"
+                  >
+                    Replace Image
+                  </label>
+                </div>
+              ) : (
+                <label
+                  htmlFor="image-upload"
+                  className="w-full h-full aspect-square max-w-[240px] border-2 border-dashed border-slate-200 hover:border-accent/40 rounded-2xl flex flex-col justify-center items-center p-6 text-center cursor-pointer transition-colors"
+                >
+                  <Upload size={32} className="text-slate-400 mb-3" />
+                  <span className="text-xs font-semibold text-slate-600 block">Click to Upload</span>
+                  <span className="text-[10px] text-slate-400 font-light block mt-1">PNG, JPG, JPEG up to 5MB</span>
+                </label>
+              )}
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2">
+          <label htmlFor="description" className="text-xs uppercase tracking-wider font-semibold text-slate-500">
+            Description *
+          </label>
+          <textarea
+            id="description"
+            required
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Introduce the piece, mention what makes it special, and include size/care instructions."
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-hidden focus:border-accent font-sans text-sm text-slate-800 transition-colors resize-none"
+          />
+        </div>
+
+        {/* Checkbox settings */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+          {/* Featured */}
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer group">
+            <div className="flex items-center h-5">
+              <input
+                type="checkbox"
+                checked={featured}
+                onChange={(e) => setFeatured(e.target.checked)}
+                className="w-4.5 h-4.5 border border-slate-300 rounded-sm text-accent focus:ring-accent accent-accent"
+              />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-sm font-semibold text-slate-800 block">Featured Creation</span>
+              <span className="text-xs text-slate-400 font-light block">Display on home page collections.</span>
+            </div>
+          </label>
+
+          {/* Customizable */}
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer group">
+            <div className="flex items-center h-5">
+              <input
+                type="checkbox"
+                checked={customizable}
+                onChange={(e) => setCustomizable(e.target.checked)}
+                className="w-4.5 h-4.5 border border-slate-300 rounded-sm text-accent focus:ring-accent accent-accent"
+              />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-sm font-semibold text-slate-800 block">Customizable</span>
+              <span className="text-xs text-slate-400 font-light block">Let customers request custom colors/names on WhatsApp.</span>
+            </div>
+          </label>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end items-center gap-3 pt-6 border-t border-slate-100">
+          <Link
+            href="/admin/products"
+            className="px-6 py-3.5 border border-slate-200 hover:bg-slate-50 text-xs font-semibold tracking-wider text-slate-500 uppercase rounded-xl transition-colors cursor-pointer"
+          >
+            Cancel
+          </Link>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-6 py-3.5 bg-accent hover:bg-accent/90 text-white text-xs font-semibold tracking-wider uppercase rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 disabled:opacity-75 cursor-pointer"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>Saving Product...</span>
+              </>
+            ) : (
+              <span>Save Product</span>
+            )}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  );
+}
