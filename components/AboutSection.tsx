@@ -38,33 +38,30 @@ export default function AboutSection() {
           <span className="text-xs uppercase tracking-widest font-semibold text-accent">Our Philosophy</span>
           
           <h2 className="font-serif text-4xl sm:text-5xl tracking-tight text-foreground leading-[1.15]">
-            Every Piece Tells <br />
-            <span className="font-light italic text-accent-secondary">a Slow-Crafted Story.</span>
+            Where Creativity <br />
+            <span className="font-light italic text-accent-secondary">Meets Tradition</span>
           </h2>
           
           <div className="space-y-5 text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
             <p>
-              At Crafty Mind Studio, we are a small artisan business born out of a deep passion for creating meaningful gifts and décor. We believe that the objects we surround ourselves with should have a soul. In a world of mass production, we invite you to embrace the charm of the unique and the beauty of the handmade.
+              At Crafty Mind Studio, we believe every handmade creation carries a story waiting to be shared. Every brushstroke, texture, and intricate detail is a reflection of passion, patience, and the timeless beauty of handcrafted artistry. Inspired by India's rich artistic heritage and reimagined with a modern touch, our creations are designed to bring warmth, elegance, and personality into every space.
             </p>
             <p>
-              Every single mandala wooden plaque, stitched cotton pouch, and tiny clay magnet is handmade with care in our studio. We spend hours planning colors, painting details, and selecting raw materials to ensure that what arrives at your doorstep is a work of art.
-            </p>
-            <p>
-              Because of this slow, dedicated process, every piece is unique, holding its own character and personal touch. When you choose our creations, you choose something built with patience, love, and intent.
+              Our journey began with a simple belief that art should be meaningful, personal, and created with intention. In a world of mass production, we choose to celebrate the charm of slow craftsmanship, where every piece is carefully handcrafted rather than simply made.
             </p>
             <p className="font-serif italic text-accent text-base sm:text-lg pt-2">
-              {"\"We don't manufacture. We pour heart, patience, and meticulous skill into everything we build.\""}
+              {"\"When you choose Crafty Mind Studio, you're supporting creativity and bringing home something created with heart, dedication, and love.\""}
             </p>
           </div>
 
           <div className="pt-4 grid grid-cols-2 gap-8 border-t border-border-custom/60">
             <div>
               <span className="font-serif text-3xl font-light text-accent">100%</span>
-              <p className="text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Handmade with Care</p>
+              <p className="text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Handmade & Unique</p>
             </div>
             <div>
-              <span className="font-serif text-3xl font-light text-accent-secondary">Small</span>
-              <p className="text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Artisan Business</p>
+              <span className="font-serif text-3xl font-light text-accent-secondary">Heart</span>
+              <p className="text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Behind Every Piece</p>
             </div>
           </div>
         </motion.div>
