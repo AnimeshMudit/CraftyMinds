@@ -86,7 +86,7 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start pb-20 border-b border-border-custom/50">
           
           {/* Left: Product Images Frame */}
-          <div className="lg:col-span-6 sticky top-28">
+          <div className="lg:col-span-6 relative lg:sticky lg:top-28 self-start">
             <div className="relative aspect-[4/5] w-full rounded-3xl overflow-hidden border border-border-custom shadow-xs bg-white group">
               <Image
                 src={product.image_url}
