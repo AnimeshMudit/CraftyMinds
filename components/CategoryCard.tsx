@@ -10,7 +10,7 @@ interface CategoryCardProps {
   description: string;
   imageSrc: string;
   href: string;
-  countLabel: string;
+  countLabel?: string;
 }
 
 export default function CategoryCard({
