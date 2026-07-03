@@ -44,13 +44,13 @@ export default function AboutSection() {
           
           <div className="space-y-5 text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
             <p>
-              At Crafty Mind Studio, we believe every handmade creation carries a story waiting to be shared. Every brushstroke, texture, and intricate detail is a reflection of passion, patience, and the timeless beauty of handcrafted artistry. Inspired by India's rich artistic heritage and reimagined with a modern touch, our creations are designed to bring warmth, elegance, and personality into every space.
+              At Crafty Mind Studio, we believe every handmade creation carries a story waiting to be shared. Every brushstroke, texture, and intricate detail is a reflection of passion, patience, and the timeless beauty of handcrafted artistry. Inspired by India&apos;s rich artistic heritage and reimagined with a modern touch, our creations are designed to bring warmth, elegance, and personality into every space.
             </p>
             <p>
               Our journey began with a simple belief that art should be meaningful, personal, and created with intention. In a world of mass production, we choose to celebrate the charm of slow craftsmanship, where every piece is carefully handcrafted rather than simply made.
             </p>
             <p className="font-serif italic text-accent text-base sm:text-lg pt-2">
-              {"\"When you choose Crafty Mind Studio, you're supporting creativity and bringing home something created with heart, dedication, and love.\""}
+              {"\"When you choose Crafty Mind Studio, you&apos;re supporting creativity and bringing home something created with heart, dedication, and love.\""}
             </p>
           </div>
 
