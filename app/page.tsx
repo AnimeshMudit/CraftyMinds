@@ -18,21 +18,18 @@ export default function Home() {
       description: "Intricately hand-painted wooden welcome boards, name plates, and wall plaques designed to add a warm, personal touch to your entryways.",
       imageSrc: "/images/mdf_art_showcase.jpg",
       href: "/mdf",
-      countLabel: "6",
     },
     {
       title: "Hand-painted Pouches",
       description: "Charming cotton canvas zipper pouches and cosmetic bags, individually hand-sewn and decorated with original hand-painted art.",
       imageSrc: "/images/handmade_pouch_showcase.jpg",
       href: "/pouches",
-      countLabel: "6",
     },
     {
       title: "Fridge Magnets",
       description: "Sweet, hand-sculpted clay bears, personalized name magnets, and hand-painted wood slices that make everyday magnetic surfaces feel special.",
       imageSrc: "/images/magnet_showcase.jpg",
       href: "/magnets",
-      countLabel: "6",
     },
   ];
 

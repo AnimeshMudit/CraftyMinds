@@ -31,10 +31,6 @@ export default function CategoryCard({
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
-        {/* Item Count Badge */}
-        <span className="absolute top-4 right-4 z-10 text-[9px] uppercase tracking-widest bg-white/90 backdrop-blur-xs text-foreground/70 font-semibold px-3 py-1 rounded-full border border-border-custom/50 shadow-xs">
-          {countLabel} Designs
-        </span>
       </div>
 
       {/* Category Info - Spacing and Typography */}
