@@ -48,13 +48,13 @@ export default function WhyHandmade() {
   };
 
   return (
-    <section className="py-24 bg-white border-b border-border-custom/50">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section className="py-12 md:py-24 bg-white border-b border-border-custom/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         
         {/* Header */}
-        <div className="text-center max-w-xl mx-auto mb-16 space-y-4">
+        <div className="text-center max-w-xl mx-auto mb-8 md:mb-16 space-y-4">
           <span className="text-xs uppercase tracking-widest font-semibold text-accent">Made with Intent</span>
-          <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-foreground">
+          <h2 className="font-serif text-2.5xl sm:text-4xl tracking-tight text-foreground">
             Why Choose Handmade?
           </h2>
           <p className="text-foreground/75 font-sans font-light leading-relaxed text-sm">
@@ -68,7 +68,7 @@ export default function WhyHandmade() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8"
         >
           {features.map((feature, idx) => {
             const Icon = feature.icon;
@@ -76,12 +76,12 @@ export default function WhyHandmade() {
               <motion.div
                 key={idx}
                 variants={itemVariants}
-                className="bg-background/40 hover:bg-white border border-border-custom p-8 rounded-2xl transition-all duration-300 hover:shadow-md group"
+                className="bg-background/40 hover:bg-white border border-border-custom p-5 md:p-8 rounded-2xl transition-all duration-300 hover:shadow-md group"
               >
-                <div className="w-12 h-12 rounded-xl bg-accent/5 flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-colors duration-300 text-accent">
+                <div className="w-12 h-12 rounded-xl bg-accent/5 flex items-center justify-center mb-4 md:mb-6 group-hover:bg-accent group-hover:text-white transition-colors duration-300 text-accent">
                   <Icon size={22} />
                 </div>
-                <h3 className="font-serif text-xl tracking-wide text-foreground mb-3">
+                <h3 className="font-serif text-lg md:text-xl tracking-wide text-foreground mb-2 md:mb-3">
                   {feature.title}
                 </h3>
                 <p className="text-foreground/70 text-xs sm:text-sm leading-relaxed font-sans font-light">

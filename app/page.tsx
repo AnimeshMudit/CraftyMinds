@@ -49,11 +49,11 @@ export default function Home() {
       <WhyHandmade />
 
       {/* 5. Collections Section */}
-      <section id="categories" className="py-24 md:py-32 bg-background scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <section id="categories" className="py-12 md:py-32 bg-background scroll-mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
           
           {/* Header */}
-          <div className="max-w-xl mb-16 space-y-4">
+          <div className="max-w-xl mb-8 md:mb-16 space-y-4">
             <span className="text-xs uppercase tracking-widest font-semibold text-accent">Our Collections</span>
             <h2 className="font-serif text-4xl sm:text-5xl tracking-tight text-foreground">
               Explore Our Collections
@@ -64,7 +64,7 @@ export default function Home() {
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
             {categories.map((category, idx) => (
               <motion.div
                 key={idx}

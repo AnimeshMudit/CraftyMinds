@@ -12,8 +12,8 @@ export default function Footer() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-white border-t border-border-custom pt-16 pb-12 mt-auto">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-6">
+    <footer className="bg-white border-t border-border-custom pt-10 pb-8 md:pt-16 md:pb-12 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-6">
         
         {/* Brand Information */}
         <div className="md:col-span-2 flex flex-col space-y-4">
@@ -92,7 +92,7 @@ export default function Footer() {
 
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 mt-16 pt-8 border-t border-border-custom/50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-foreground/50 tracking-wider">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mt-8 pt-6 md:mt-16 md:pt-8 border-t border-border-custom/50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-foreground/50 tracking-wider">
         <p>© {currentYear} CRAFTY MIND STUDIO. ALL RIGHTS RESERVED.</p>
         <p className="flex items-center gap-1">
           Lovingly hand-painted & stitched.

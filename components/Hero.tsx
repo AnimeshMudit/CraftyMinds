@@ -43,11 +43,11 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[95vh] flex items-center pt-24 pb-16 overflow-hidden bg-background">
+    <section className="relative min-h-[85vh] md:min-h-[95vh] flex items-center pt-20 md:pt-24 pb-8 md:pb-16 overflow-hidden bg-background">
       {/* Decorative background grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#ECE6DD_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center relative z-10">
         
         {/* Editorial Text Column */}
         <motion.div
@@ -56,14 +56,14 @@ export default function Hero() {
           animate="visible"
           className="lg:col-span-6 flex flex-col justify-center text-left"
         >
-          <motion.div variants={itemVariants} className="inline-flex items-center space-x-2 border border-accent/20 bg-accent/5 px-4 py-1.5 rounded-full w-fit mb-6">
+          <motion.div variants={itemVariants} className="inline-flex items-center space-x-2 border border-accent/20 bg-accent/5 px-4 py-1.5 rounded-full w-fit mb-4 md:mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             <span className="text-[11px] font-medium uppercase tracking-widest text-accent">Handmade in Small Batches</span>
           </motion.div>
 
           <motion.h1
             variants={itemVariants}
-            className="font-serif text-5xl sm:text-6xl md:text-7xl tracking-tight text-foreground leading-[1.08] mb-6"
+            className="font-serif text-3.5xl sm:text-5xl md:text-7xl tracking-tight text-foreground leading-[1.1] mb-4 md:mb-6"
           >
             Crafted by Hand. <br />
             <span className="font-light italic text-accent">Made with Love.</span>
@@ -71,28 +71,28 @@ export default function Hero() {
 
           <motion.p
             variants={itemVariants}
-            className="text-foreground/75 text-base md:text-lg max-w-lg leading-relaxed mb-10 font-sans font-light"
+            className="text-foreground/75 text-sm sm:text-base md:text-lg max-w-lg leading-relaxed mb-6 md:mb-10 font-sans font-light"
           >
             Every creation is thoughtfully handmade—from colorful MDF décor and hand-painted pouches to adorable fridge magnets that make everyday spaces feel special.
           </motion.p>
 
           <motion.div
             variants={itemVariants}
-            className="flex flex-wrap gap-4 items-center"
+            className="flex flex-wrap gap-3 md:gap-4 items-center"
           >
             <Link
               href="#categories"
-              className="group px-8 py-4 bg-accent hover:bg-accent/90 text-white rounded-full font-medium tracking-wide text-sm flex items-center gap-3 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              className="group px-6 py-3.5 md:px-8 md:py-4 bg-accent hover:bg-accent/90 text-white rounded-full font-medium tracking-wide text-xs sm:text-sm flex items-center gap-2.5 md:gap-3 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
               <span>Browse Collections</span>
-              <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+              <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
 
             <a
               href="#contact"
-              className="px-8 py-4 border border-border-custom bg-white/50 backdrop-blur-xs hover:bg-white text-foreground rounded-full font-medium tracking-wide text-sm flex items-center gap-2.5 transition-all duration-300 hover:border-foreground/30 hover:-translate-y-0.5"
+              className="px-6 py-3.5 md:px-8 md:py-4 border border-border-custom bg-white/50 backdrop-blur-xs hover:bg-white text-foreground rounded-full font-medium tracking-wide text-xs sm:text-sm flex items-center gap-2 transition-all duration-300 hover:border-foreground/30 hover:-translate-y-0.5"
             >
-              <MessageCircle size={16} className="text-accent" />
+              <MessageCircle size={15} className="text-accent" />
               <span>Contact Us</span>
             </a>
           </motion.div>
@@ -103,7 +103,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="lg:col-span-6 relative h-[450px] sm:h-[550px] w-full flex items-center justify-center"
+          className="lg:col-span-6 relative h-[280px] sm:h-[450px] md:h-[550px] w-full flex items-center justify-center mt-4 lg:mt-0"
         >
           {/* Main Large Image (MDF Art) */}
           <motion.div
@@ -165,7 +165,7 @@ export default function Hero() {
             initial={{ scale: 0, rotate: -40 }}
             animate={{ scale: 1, rotate: 12 }}
             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 1 }}
-            className="absolute left-[3%] bottom-[12%] z-30 bg-[#79825A] text-white py-3 px-5 rounded-full shadow-lg font-serif text-sm tracking-wide border-2 border-white"
+            className="absolute left-[3%] bottom-[12%] z-30 bg-[#79825A] text-white py-2 px-4 md:py-3 md:px-5 rounded-full shadow-lg font-serif text-xs md:text-sm tracking-wide border-2 border-white"
           >
             100% Original
           </motion.div>

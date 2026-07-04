@@ -49,11 +49,11 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-24 bg-white border-b border-border-custom/50">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section className="py-12 md:py-24 bg-white border-b border-border-custom/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         
         {/* Section Header */}
-        <div className="text-center max-w-xl mx-auto mb-16 space-y-4">
+        <div className="text-center max-w-xl mx-auto mb-8 md:mb-16 space-y-4">
           <span className="text-xs uppercase tracking-widest font-semibold text-accent">Customer Stories</span>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl tracking-tight text-foreground">
             Loved by Collectors
@@ -69,15 +69,15 @@ export default function Testimonials() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
         >
           {testimonials.map((t, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
-              className="bg-background/30 hover:bg-white border border-border-custom p-8 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:shadow-md group"
+              className="bg-background/30 hover:bg-white border border-border-custom p-5 md:p-8 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:shadow-md group"
             >
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* Rating Stars */}
                 <div className="flex gap-1 text-accent">
                   {[...Array(t.rating)].map((_, i) => (
@@ -86,13 +86,13 @@ export default function Testimonials() {
                 </div>
 
                 {/* Review Text */}
-                <p className="text-foreground/80 font-serif italic text-base leading-relaxed">
+                <p className="text-foreground/80 font-serif italic text-sm sm:text-base leading-relaxed">
                   &ldquo;{t.review}&rdquo;
                 </p>
               </div>
 
               {/* User Bio Footer */}
-              <div className="mt-8 pt-6 border-t border-border-custom/60 flex items-center gap-4">
+              <div className="mt-6 pt-4 md:mt-8 md:pt-6 border-t border-border-custom/60 flex items-center gap-4">
                 {/* Customer Photo / Avatar space */}
                 <div className="w-10 h-10 rounded-full border border-border-custom bg-background flex items-center justify-center text-foreground/40 overflow-hidden relative group-hover:border-accent/40 transition-colors duration-300">
                   <User size={16} />

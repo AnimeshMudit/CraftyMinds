@@ -131,7 +131,7 @@ export default function AdminLayout({
 
         {/* Main Content Area */}
         <div className="flex-grow flex flex-col min-h-screen">
-          <main className="flex-grow p-6 lg:p-10 pt-24 lg:pt-10 overflow-x-hidden">
+          <main className="flex-grow p-4 md:p-6 lg:p-10 pt-20 lg:pt-10 overflow-x-hidden">
             {children}
           </main>
         </div>

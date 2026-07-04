@@ -86,7 +86,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
       </div>
 
       {/* Stats Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
           const isActive = selectedCategory === stat.id;
@@ -94,7 +94,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
             <button
               key={stat.id}
               onClick={() => setSelectedCategory(stat.id)}
-              className={`w-full text-left bg-white rounded-2xl p-6 flex items-center justify-between transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 ${stat.activeRing} border
+              className={`w-full text-left bg-white rounded-2xl p-4 md:p-6 flex items-center justify-between transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 ${stat.activeRing} border
                 ${
                   isActive
                     ? `${stat.activeBorder} ${stat.activeBg} shadow-md scale-[1.02]`
@@ -105,15 +105,15 @@ export default function DashboardClient({ products }: DashboardClientProps) {
               type="button"
             >
               <div className="space-y-1">
-                <span className="text-xs text-slate-400 font-medium font-sans uppercase tracking-wider block">
+                <span className="text-[10px] md:text-xs text-slate-400 font-medium font-sans uppercase tracking-wider block">
                   {stat.title}
                 </span>
-                <p className="text-3xl font-serif font-semibold text-slate-800">
+                <p className="text-xl md:text-3xl font-serif font-semibold text-slate-800">
                   {stat.value}
                 </p>
               </div>
-              <div className={`p-3 rounded-xl border ${stat.color} shrink-0 transition-transform duration-300 group-hover:scale-110`}>
-                <Icon size={22} />
+              <div className={`p-2 md:p-3 rounded-xl border ${stat.color} shrink-0 transition-transform duration-300 group-hover:scale-110`}>
+                <Icon size={18} />
               </div>
             </button>
           );
@@ -122,9 +122,9 @@ export default function DashboardClient({ products }: DashboardClientProps) {
 
       {/* Recent Products Table Section */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="p-4 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h2 className="font-serif text-xl font-semibold text-slate-800">
+            <h2 className="font-serif text-lg md:text-xl font-semibold text-slate-800">
               {selectedCategory === "all"
                 ? "Recent Creations"
                 : `Recent Creations: ${
@@ -152,78 +152,121 @@ export default function DashboardClient({ products }: DashboardClientProps) {
             No products in this category yet.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100 text-[10px] uppercase tracking-wider text-slate-400 font-semibold font-sans">
-                  <th className="py-4 px-6">Product</th>
-                  <th className="py-4 px-6">Category</th>
-                  <th className="py-4 px-6">Price</th>
-                  <th className="py-4 px-6 text-center">Featured</th>
-                  <th className="py-4 px-6 text-center">Customizable</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-sm font-sans text-slate-700">
-                {filteredProducts.map((product) => (
-                  <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
-                    {/* Image & Title */}
-                    <td className="py-4 px-6 flex items-center gap-4">
-                      <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
-                        <Image
-                          src={product.image_url}
-                          alt={product.title}
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                        />
-                      </div>
-                      <span className="font-medium text-slate-800 hover:text-accent transition-colors">
-                        <Link href={`/admin/products`}>{product.title}</Link>
-                      </span>
-                    </td>
-                    {/* Category */}
-                    <td className="py-4 px-6">
-                      <span className="capitalize text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
-                        {product.category === "mdf"
-                          ? "MDF Art"
-                          : product.category === "pouch"
-                          ? "Pouch"
-                          : "Magnet"}
-                      </span>
-                    </td>
-                    {/* Price */}
-                    <td className="py-4 px-6 font-medium text-slate-800">
-                      ₹{product.price.toLocaleString("en-IN")}
-                    </td>
-                    {/* Featured */}
-                    <td className="py-4 px-6 text-center">
-                      {product.featured ? (
-                        <span className="inline-block text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-2.5 py-0.5 rounded-sm">
-                          Yes
-                        </span>
-                      ) : (
-                        <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm">
-                          No
-                        </span>
-                      )}
-                    </td>
-                    {/* Customizable */}
-                    <td className="py-4 px-6 text-center">
-                      {product.customizable ? (
-                        <span className="inline-block text-[9px] uppercase tracking-wider bg-purple-500/10 text-purple-700 font-semibold px-2.5 py-0.5 rounded-sm">
-                          Yes
-                        </span>
-                      ) : (
-                        <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm">
-                          No
-                        </span>
-                      )}
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/50 border-b border-slate-100 text-[10px] uppercase tracking-wider text-slate-400 font-semibold font-sans">
+                    <th className="py-4 px-6">Product</th>
+                    <th className="py-4 px-6">Category</th>
+                    <th className="py-4 px-6">Price</th>
+                    <th className="py-4 px-6 text-center">Featured</th>
+                    <th className="py-4 px-6 text-center">Customizable</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-sm font-sans text-slate-700">
+                  {filteredProducts.map((product) => (
+                    <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
+                      {/* Image & Title */}
+                      <td className="py-4 px-6 flex items-center gap-4">
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
+                          <Image
+                            src={product.image_url}
+                            alt={product.title}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        </div>
+                        <span className="font-medium text-slate-800 hover:text-accent transition-colors">
+                          <Link href={`/admin/products`}>{product.title}</Link>
+                        </span>
+                      </td>
+                      {/* Category */}
+                      <td className="py-4 px-6">
+                        <span className="capitalize text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+                          {product.category === "mdf"
+                            ? "MDF Art"
+                            : product.category === "pouch"
+                            ? "Pouch"
+                            : "Magnet"}
+                        </span>
+                      </td>
+                      {/* Price */}
+                      <td className="py-4 px-6 font-medium text-slate-800">
+                        ₹{product.price.toLocaleString("en-IN")}
+                      </td>
+                      {/* Featured */}
+                      <td className="py-4 px-6 text-center">
+                        {product.featured ? (
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-2.5 py-0.5 rounded-sm">
+                            Yes
+                          </span>
+                        ) : (
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm">
+                            No
+                          </span>
+                        )}
+                      </td>
+                      {/* Customizable */}
+                      <td className="py-4 px-6 text-center">
+                        {product.customizable ? (
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-purple-500/10 text-purple-700 font-semibold px-2.5 py-0.5 rounded-sm">
+                            Yes
+                          </span>
+                        ) : (
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm">
+                            No
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards View */}
+            <div className="block md:hidden divide-y divide-slate-100">
+              {filteredProducts.map((product) => (
+                <div key={product.id} className="p-4 flex gap-4 hover:bg-slate-50/50 transition-colors items-center">
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
+                    <Image
+                      src={product.image_url}
+                      alt={product.title}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
+                  <div className="flex-grow min-w-0 space-y-1.5">
+                    <span className="font-semibold text-slate-800 block truncate text-sm">
+                      <Link href="/admin/products">{product.title}</Link>
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="capitalize text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                        {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : "Magnet"}
+                      </span>
+                      {product.featured && (
+                        <span className="inline-block text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-1.5 py-0.5 rounded-sm">
+                          Featured
+                        </span>
+                      )}
+                      {product.customizable && (
+                        <span className="inline-block text-[9px] uppercase tracking-wider bg-purple-500/10 text-purple-700 font-semibold px-1.5 py-0.5 rounded-sm">
+                          Customizable
+                        </span>
+                      )}
+                    </div>
+                    <div className="font-semibold text-slate-800 text-xs">
+                      ₹{product.price.toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

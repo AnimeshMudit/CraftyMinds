@@ -86,7 +86,8 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
       ) : (
         /* Products List (Table layout with responsive styling) */
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 border-b border-slate-100 text-[10px] uppercase tracking-wider text-slate-400 font-semibold font-sans">
@@ -181,6 +182,66 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Cards View */}
+          <div className="block md:hidden divide-y divide-slate-100">
+            {products.map((product) => (
+              <div key={product.id} className="p-4 flex gap-4 hover:bg-slate-50/50 transition-colors items-start">
+                {/* image */}
+                <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
+                  <Image
+                    src={product.image_url}
+                    alt={product.title}
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                  />
+                </div>
+                {/* Product info */}
+                <div className="flex-grow min-w-0 space-y-1.5">
+                  <span className="font-semibold text-slate-800 block truncate text-base">{product.title}</span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="capitalize text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                      {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : "Magnet"}
+                    </span>
+                    {product.featured && (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-1.5 py-0.5 rounded-sm">
+                        <Check size={8} />
+                        <span>Featured</span>
+                      </span>
+                    )}
+                    {product.customizable && (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider bg-purple-500/10 text-purple-700 font-semibold px-1.5 py-0.5 rounded-sm">
+                        <Check size={8} />
+                        <span>Customizable</span>
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="font-semibold text-slate-800 text-sm">
+                      ₹{product.price.toLocaleString("en-IN")}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        href={`/admin/products/${product.id}/edit`}
+                        className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all cursor-pointer"
+                        title="Edit Product"
+                      >
+                        <Edit2 size={15} />
+                      </Link>
+                      <button
+                        onClick={() => setProductToDelete(product)}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
+                        title="Delete Product"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

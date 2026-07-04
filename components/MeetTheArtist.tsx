@@ -25,8 +25,8 @@ export default function MeetTheArtist() {
   };
 
   return (
-    <section id="artist" className="py-24 md:py-32 bg-white overflow-hidden border-b border-border-custom/50">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+    <section id="artist" className="py-12 md:py-32 bg-white overflow-hidden border-b border-border-custom/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-24 items-center">
         
         {/* Left Column: Text Content */}
         <motion.div
@@ -34,17 +34,17 @@ export default function MeetTheArtist() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="lg:col-span-7 flex flex-col justify-center space-y-6 text-left"
+          className="lg:col-span-7 flex flex-col justify-center space-y-4 md:space-y-6 text-left"
         >
           <motion.span variants={itemVariants} className="text-xs uppercase tracking-widest font-semibold text-accent">
             Behind the Craft
           </motion.span>
           
-          <motion.h2 variants={itemVariants} className="font-serif text-4xl sm:text-5xl tracking-tight text-foreground leading-[1.15]">
+          <motion.h2 variants={itemVariants} className="font-serif text-3xl sm:text-5xl tracking-tight text-foreground leading-[1.15]">
             Meet the Artist
           </motion.h2>
           
-          <motion.div variants={itemVariants} className="space-y-5 text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
+          <motion.div variants={itemVariants} className="space-y-3.5 md:space-y-5 text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
             <p>
               Hi, I&apos;m the face behind Crafty Mind Studio. For me, creating isn&apos;t just a hobby—it&apos;s a slow, quiet dialogue between my hands, colors, and the raw materials. 
             </p>
@@ -60,7 +60,7 @@ export default function MeetTheArtist() {
           </motion.div>
 
           {/* Key values */}
-          <motion.div variants={itemVariants} className="pt-6 grid grid-cols-1 sm:grid-cols-3 gap-6 border-t border-border-custom/60">
+          <motion.div variants={itemVariants} className="pt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 border-t border-border-custom/60">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-full bg-accent/5 text-accent">
                 <Palette size={18} />
@@ -99,14 +99,14 @@ export default function MeetTheArtist() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-          className="lg:col-span-5 relative"
+          className="lg:col-span-5 relative mt-4 lg:mt-0"
         >
           {/* Framed Placeholder */}
-          <div className="relative aspect-square w-full rounded-3xl overflow-hidden border-2 border-dashed border-accent/20 bg-background flex flex-col items-center justify-center p-8 text-center group transition-colors duration-300 hover:bg-accent/5">
+          <div className="relative h-[260px] sm:h-auto sm:aspect-square w-full rounded-3xl overflow-hidden border-2 border-dashed border-accent/20 bg-background flex flex-col items-center justify-center p-4 md:p-8 text-center group transition-colors duration-300 hover:bg-accent/5">
             {/* Elegant inner box */}
             <div className="absolute inset-4 border border-border-custom rounded-2xl pointer-events-none" />
             
-            <div className="space-y-4 max-w-xs z-10">
+            <div className="space-y-3 md:space-y-4 max-w-xs z-10">
               <div className="mx-auto w-12 h-12 rounded-full border border-accent/30 flex items-center justify-center text-accent/60 bg-white shadow-xs">
                 <Palette size={20} className="animate-pulse" />
               </div>
@@ -125,8 +125,8 @@ export default function MeetTheArtist() {
           </div>
 
           {/* Accent frame decoration */}
-          <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b border-l border-accent-secondary/20 rounded-bl-3xl pointer-events-none" />
-          <div className="absolute -top-4 -right-4 w-24 h-24 border-t border-r border-accent/20 rounded-tr-3xl pointer-events-none" />
+          <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b border-l border-accent-secondary/20 rounded-bl-3xl pointer-events-none hidden sm:block" />
+          <div className="absolute -top-4 -right-4 w-24 h-24 border-t border-r border-accent/20 rounded-tr-3xl pointer-events-none hidden sm:block" />
         </motion.div>
 
       </div>

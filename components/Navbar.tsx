@@ -36,17 +36,17 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
         scrolled
-          ? "bg-background/85 backdrop-blur-md border-border-custom/60 py-4 shadow-xs"
-          : "bg-transparent border-transparent py-6"
+          ? "bg-background/85 backdrop-blur-md border-border-custom/60 py-3 md:py-4 shadow-xs"
+          : "bg-transparent border-transparent py-4 md:py-6"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="group flex flex-col">
-          <span className="font-serif text-2xl md:text-3xl tracking-wide text-foreground group-hover:text-accent transition-colors duration-300">
+          <span className="font-serif text-xl sm:text-2xl md:text-3xl tracking-wide text-foreground group-hover:text-accent transition-colors duration-300">
             Crafty Mind <span className="font-light italic text-accent">Studio</span>
           </span>
-          <span className="text-[10px] uppercase tracking-widest text-foreground/60 -mt-1 group-hover:text-foreground/80 transition-colors duration-300">
+          <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-foreground/60 -mt-1 group-hover:text-foreground/80 transition-colors duration-300">
             Handcrafted With Love
           </span>
         </Link>

@@ -48,14 +48,14 @@ export default function HowItWorks() {
   };
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden border-b border-border-custom/50">
+    <section className="py-12 md:py-24 bg-background relative overflow-hidden border-b border-border-custom/50">
       {/* Decorative subtle background detail */}
       <div className="absolute inset-0 bg-[radial-gradient(#ECE6DD_1px,transparent_1px)] [background-size:32px_32px] opacity-30 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-xl mx-auto mb-20 space-y-4">
+        <div className="text-center max-w-xl mx-auto mb-10 md:mb-20 space-y-4">
           <span className="text-xs uppercase tracking-widest font-semibold text-accent-secondary">Simplicity First</span>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl tracking-tight text-foreground">
             How Ordering Works
@@ -71,7 +71,7 @@ export default function HowItWorks() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="relative grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8"
+          className="relative grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8"
         >
           {/* Horizontal line for desktop timeline */}
           <div className="absolute top-[28px] left-[12.5%] right-[12.5%] h-[1px] bg-border-custom hidden md:block z-0" />
@@ -82,7 +82,7 @@ export default function HowItWorks() {
               <motion.div
                 key={idx}
                 variants={itemVariants}
-                className="flex flex-col items-center text-center space-y-5 relative z-10 group"
+                className="flex flex-col items-center text-center space-y-3 md:space-y-5 relative z-10 group"
               >
                 {/* Step Icon Node */}
                 <div className="w-14 h-14 rounded-full bg-white border border-border-custom flex items-center justify-center text-accent shadow-xs group-hover:border-accent group-hover:bg-accent group-hover:text-white transition-all duration-500 transform group-hover:scale-105">
@@ -96,7 +96,7 @@ export default function HowItWorks() {
 
                 {/* Step Content */}
                 <div className="space-y-2 max-w-xs">
-                  <h3 className="font-serif text-xl text-foreground tracking-wide font-medium">
+                  <h3 className="font-serif text-lg md:text-xl text-foreground tracking-wide font-medium">
                     {step.title}
                   </h3>
                   <p className="text-foreground/70 text-xs sm:text-sm font-sans font-light leading-relaxed">
