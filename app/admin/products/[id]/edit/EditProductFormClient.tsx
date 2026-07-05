@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Product } from "@/types/product";
+import { Product, Specification } from "@/types/product";
 import { useToast } from "@/components/admin/Toast";
-import { ArrowLeft, Upload, Loader2 } from "lucide-react";
+import { ArrowLeft, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 
 interface EditProductFormClientProps {
   product: Product;
@@ -26,6 +26,24 @@ export default function EditProductFormClient({ product }: EditProductFormClient
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(product.image_url);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [specifications, setSpecifications] = useState<Specification[]>(product.specifications || []);
+
+  const addSpecification = () => {
+    setSpecifications([...specifications, { label: "", value: "" }]);
+  };
+
+  const removeSpecification = (index: number) => {
+    setSpecifications(specifications.filter((_, i) => i !== index));
+  };
+
+  const handleSpecChange = (index: number, field: "label" | "value", newValue: string) => {
+    const updatedSpecs = [...specifications];
+    updatedSpecs[index] = {
+      ...updatedSpecs[index],
+      [field]: newValue,
+    };
+    setSpecifications(updatedSpecs);
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -79,6 +97,7 @@ export default function EditProductFormClient({ product }: EditProductFormClient
         image_url: newImageUrl,
         featured,
         customizable,
+        specifications: specifications.filter((spec) => spec.label.trim() && spec.value.trim()),
       };
 
       const productRes = await fetch(`/api/products/${product.id}`, {
@@ -275,6 +294,59 @@ export default function EditProductFormClient({ product }: EditProductFormClient
               <span className="text-xs text-slate-400 font-light block">Let customers request custom colors/names on WhatsApp.</span>
             </div>
           </label>
+        </div>
+
+        {/* Dynamic Specifications Editor */}
+        <div className="space-y-4 pt-6 border-t border-slate-100">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-xs uppercase tracking-wider font-semibold text-slate-500">Product Specifications</h3>
+              <p className="text-[11px] text-slate-400 font-light mt-0.5">Add details like Material, Size, Care Instructions, etc.</p>
+            </div>
+            <button
+              type="button"
+              onClick={addSpecification}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-accent/20 hover:border-accent text-accent hover:bg-accent/5 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            >
+              <Plus size={14} />
+              <span>Add Specification</span>
+            </button>
+          </div>
+
+          {specifications.length === 0 ? (
+            <p className="text-xs text-slate-400 font-light italic py-2">No specifications added yet. Add some to display on the product page.</p>
+          ) : (
+            <div className="space-y-3">
+              {specifications.map((spec, index) => (
+                <div key={index} className="flex gap-3 items-center">
+                  <div className="flex-1 grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={spec.label}
+                      onChange={(e) => handleSpecChange(index, "label", e.target.value)}
+                      placeholder="Label (e.g. Material)"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-hidden focus:border-accent font-sans text-xs text-slate-800 transition-colors"
+                    />
+                    <input
+                      type="text"
+                      value={spec.value}
+                      onChange={(e) => handleSpecChange(index, "value", e.target.value)}
+                      placeholder="Value (e.g. Premium MDF Board)"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-hidden focus:border-accent font-sans text-xs text-slate-800 transition-colors"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeSpecification(index)}
+                    className="text-red-500 hover:text-red-600 hover:bg-red-50 p-2.5 rounded-xl transition-colors cursor-pointer"
+                    title="Remove specification"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}

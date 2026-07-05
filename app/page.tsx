@@ -4,7 +4,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
-import MeetTheArtist from "@/components/MeetTheArtist";
 import CategoryCard from "@/components/CategoryCard";
 import WhyHandmade from "@/components/WhyHandmade";
 import HowItWorks from "@/components/HowItWorks";
@@ -42,10 +41,7 @@ export default function Home() {
       {/* 2. About Crafty Mind Studio */}
       <AboutSection />
 
-      {/* 3. Meet the Artist (Craftsmanship Story) */}
-      <MeetTheArtist />
-
-      {/* 4. Why Choose Handmade */}
+      {/* 3. Why Choose Handmade */}
       <WhyHandmade />
 
       {/* 5. Collections Section */}

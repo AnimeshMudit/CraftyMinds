@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { title, description, price, category, image_url, featured, customizable } = body;
+    const { title, description, price, category, image_url, featured, customizable, specifications } = body;
 
     if (!title || !description || price === undefined || !category || !image_url) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -34,6 +34,7 @@ export async function POST(request: Request) {
       image_url,
       featured: !!featured,
       customizable: !!customizable,
+      specifications,
     });
 
     return NextResponse.json(newProduct, { status: 201 });

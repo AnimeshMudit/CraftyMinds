@@ -24,8 +24,8 @@ export default function AboutSection() {
   };
 
   return (
-    <section id="about" className="py-12 md:py-32 bg-white overflow-hidden border-t border-b border-border-custom/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-24 items-center">
+    <section id="about" className="py-24 md:py-32 bg-white overflow-hidden border-t border-b border-border-custom/50">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
         
         {/* Left Column: Editorial Story */}
         <motion.div
@@ -33,35 +33,57 @@ export default function AboutSection() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={textVariants}
-          className="lg:col-span-6 flex flex-col justify-center space-y-4 md:space-y-6"
+          className="lg:col-span-6 flex flex-col justify-center space-y-6"
         >
-          <span className="text-xs uppercase tracking-widest font-semibold text-accent">Our Philosophy</span>
+          <span className="text-xs uppercase tracking-widest font-semibold text-accent">My Story</span>
           
-          <h2 className="font-serif text-3xl sm:text-5xl tracking-tight text-foreground leading-[1.15]">
-            Where Creativity <br />
-            <span className="font-light italic text-accent-secondary">Meets Tradition</span>
+          <h2 className="font-serif text-4xl sm:text-5xl tracking-tight text-foreground leading-[1.15]">
+            Hello and <br />
+            <span className="font-light italic text-accent-secondary">Welcome!</span>
           </h2>
           
-          <div className="space-y-3.5 md:space-y-5 text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
+          <div className="space-y-5 text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
             <p>
-              At Crafty Mind Studio, we believe every handmade creation carries a story waiting to be shared. Every brushstroke, texture, and intricate detail is a reflection of passion, patience, and the timeless beauty of handcrafted artistry. Inspired by India&apos;s rich artistic heritage and reimagined with a modern touch, our creations are designed to bring warmth, elegance, and personality into every space.
+              I&apos;m a homemaker, a mother, and now, finally, an artist following a dream that has been waiting patiently for many years.
             </p>
             <p>
-              Our journey began with a simple belief that art should be meaningful, personal, and created with intention. In a world of mass production, we choose to celebrate the charm of slow craftsmanship, where every piece is carefully handcrafted rather than simply made.
+              Like countless women, I once had dreams, career aspirations, and passions of my own. But when my only son came into my life, I chose to dedicate myself completely to raising him. Every decision I made revolved around his happiness, his education, and giving him the best life I could. My passion for art and creativity quietly took a back seat, but it never left my heart.
             </p>
-            <p className="font-serif italic text-accent text-base sm:text-lg pt-1">
-              {"\"When you choose Crafty Mind Studio, you&apos;re supporting creativity and bringing home something created with heart, dedication, and love.\""}
+            <p>
+              Today, my son has grown up and is pursuing his college education. Watching him become independent gave me the courage to rediscover a part of myself that I had set aside for years.
+            </p>
+            <p>
+              This website is the beginning of that new chapter.
+            </p>
+            <p>
+              Every handmade creation you see here is made with love, patience, and countless hours of dedication. For me, art isn&apos;t just about creating beautiful things—it&apos;s about expressing emotions, reliving cherished memories, and proving that it&apos;s never too late to follow your dreams.
+            </p>
+            <p>
+              This isn&apos;t just a business. It&apos;s a dream reborn after years of waiting.
+            </p>
+            <p>
+              By supporting my work, you&apos;re not just buying a handmade product—you are encouraging someone who finally found the courage to believe in herself again. Every order reminds me that dreams have no expiry date and that every new beginning is worth celebrating.
+            </p>
+            <p>
+              Thank you for being here and for becoming a part of my journey. I hope my creations bring as much joy to your home as they bring to my heart while making them.
+            </p>
+            <div className="pt-2 space-y-1">
+              <p className="font-medium text-foreground/90">With love and gratitude,</p>
+              <p className="text-accent font-medium">❤️ Handmade with Love</p>
+            </div>
+            <p className="font-serif italic text-accent text-base sm:text-lg pt-2">
+              {"\"It&apos;s never too late to begin again, and every dream deserves a second chance.\""}
             </p>
           </div>
 
-          <div className="pt-4 grid grid-cols-2 gap-4 sm:gap-8 border-t border-border-custom/60">
+          <div className="pt-4 grid grid-cols-2 gap-8 border-t border-border-custom/60">
             <div>
-              <span className="font-serif text-2xl sm:text-3xl font-light text-accent">100%</span>
-              <p className="text-[10px] md:text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Handmade & Unique</p>
+              <span className="font-serif text-3xl font-light text-accent">100%</span>
+              <p className="text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Handmade & Unique</p>
             </div>
             <div>
-              <span className="font-serif text-2xl sm:text-3xl font-light text-accent-secondary">Heart</span>
-              <p className="text-[10px] md:text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Behind Every Piece</p>
+              <span className="font-serif text-3xl font-light text-accent-secondary">Heart</span>
+              <p className="text-[11px] uppercase tracking-wider text-foreground/60 mt-1">Behind Every Piece</p>
             </div>
           </div>
         </motion.div>
@@ -72,9 +94,9 @@ export default function AboutSection() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={imageVariants}
-          className="lg:col-span-6 relative mt-4 lg:mt-0"
+          className="lg:col-span-6 relative"
         >
-          <div className="relative h-[240px] sm:h-[450px] rounded-3xl overflow-hidden shadow-2xl border border-border-custom bg-background group">
+          <div className="relative h-[350px] sm:h-[450px] rounded-3xl overflow-hidden shadow-2xl border border-border-custom bg-background group">
             <Image
               src="/images/crafting_process.jpg"
               alt="Artisan hand painting wood art"
