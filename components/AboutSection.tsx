@@ -98,7 +98,7 @@ export default function AboutSection() {
         >
           <div className="relative h-[350px] sm:h-[450px] rounded-3xl overflow-hidden shadow-2xl border border-border-custom bg-background group">
             <Image
-              src="/images/crafting_process.jpg"
+              src="https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101248638_ChatGPT_Image_Jul_3__2026__11_23_30_PM.png"
               alt="Artisan hand painting wood art"
               fill
               className="object-cover transition-transform duration-1000 group-hover:scale-103"

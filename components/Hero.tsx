@@ -112,7 +112,7 @@ export default function Hero() {
             className="absolute left-[5%] top-[10%] w-[55%] h-[70%] rounded-2xl overflow-hidden border-4 border-white shadow-xl rotate-[-2deg] cursor-pointer group"
           >
             <Image
-              src="/images/mdf_art_showcase.jpg"
+              src="https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101184420_ChatGPT_Image_Jul_3__2026__11_22_29_PM.png"
               alt="MDF Hand-painted Mandala Art"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -131,7 +131,7 @@ export default function Hero() {
             className="absolute right-[5%] top-[5%] w-[42%] h-[50%] rounded-2xl overflow-hidden border-4 border-white shadow-lg rotate-[3deg] cursor-pointer group"
           >
             <Image
-              src="/images/handmade_pouch_showcase.jpg"
+              src="https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101357831_ChatGPT_Image_Jul_3__2026__02_07_30_AM.png"
               alt="Handmade Quilted Pouch"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -149,7 +149,7 @@ export default function Hero() {
             className="absolute right-[12%] bottom-[8%] w-[38%] h-[42%] rounded-2xl overflow-hidden border-4 border-white shadow-lg rotate-[-4deg] cursor-pointer group"
           >
             <Image
-              src="/images/magnet_showcase.jpg"
+              src="https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101937753_ChatGPT_Image_Jul_3__2026__11_35_05_PM.png"
               alt="Handmade Fridge Magnets"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
