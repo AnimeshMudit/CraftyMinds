@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import { getProducts } from "@/lib/supabase/products";
 import ProductGrid from "@/components/ProductGrid";
 
@@ -27,34 +26,6 @@ export default async function MdfCategoryPage() {
           <p className="text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
             Detailed, hand-painted wooden panels and circular plates styled with folk motifs, celestial art, and mandalas. Every stroke is painted with love and sealed for a premium gloss finish.
           </p>
-        </div>
-
-        {/* Category Navigation Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar scrollbar-none">
-          <Link
-            href="/"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-white border-border-custom text-foreground/75 hover:border-foreground/30 transition-all duration-300"
-          >
-            All Collections
-          </Link>
-          <Link
-            href="/mdf"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-accent border-accent text-white transition-all duration-300"
-          >
-            MDF Arts
-          </Link>
-          <Link
-            href="/pouches"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-white border-border-custom text-foreground/75 hover:border-foreground/30 transition-all duration-300"
-          >
-            Pouches
-          </Link>
-          <Link
-            href="/magnets"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-white border-border-custom text-foreground/75 hover:border-foreground/30 transition-all duration-300"
-          >
-            Magnets
-          </Link>
         </div>
 
         {/* Product Grid */}

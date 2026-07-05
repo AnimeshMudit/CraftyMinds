@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import { getProducts } from "@/lib/supabase/products";
 import ProductGrid from "@/components/ProductGrid";
 
@@ -27,34 +26,6 @@ export default async function PouchesCategoryPage() {
           <p className="text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
             Quilted utility bags, cosmetic cases, and linen organizers, individually cut, hand-sewn, and finished with sturdy zippers. Crafted using beautiful indigo block prints and intricate hand embroideries.
           </p>
-        </div>
-
-        {/* Category Navigation Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar scrollbar-none">
-          <Link
-            href="/"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-white border-border-custom text-foreground/75 hover:border-foreground/30 transition-all duration-300"
-          >
-            All Collections
-          </Link>
-          <Link
-            href="/mdf"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-white border-border-custom text-foreground/75 hover:border-foreground/30 transition-all duration-300"
-          >
-            MDF Arts
-          </Link>
-          <Link
-            href="/pouches"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-accent border-accent text-white transition-all duration-300"
-          >
-            Pouches
-          </Link>
-          <Link
-            href="/magnets"
-            className="shrink-0 px-4 py-2 rounded-full text-[10px] uppercase tracking-wider font-semibold border bg-white border-border-custom text-foreground/75 hover:border-foreground/30 transition-all duration-300"
-          >
-            Magnets
-          </Link>
         </div>
 
         {/* Product Grid */}
