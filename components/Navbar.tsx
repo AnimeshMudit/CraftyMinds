@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/mdf", label: "MDF Arts" },
   { href: "/pouches", label: "Pouches" },
   { href: "/magnets", label: "Magnets" },
+  { href: "/rakhis", label: "Rakhis" },
 ];
 
 export default function Navbar() {

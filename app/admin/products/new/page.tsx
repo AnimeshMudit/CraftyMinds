@@ -14,7 +14,7 @@ export default function AddProductPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState<"mdf" | "pouch" | "magnet">("mdf");
+  const [category, setCategory] = useState<"mdf" | "pouch" | "magnet" | "rakhis">("mdf");
   const [featured, setFeatured] = useState(false);
   const [customizable, setCustomizable] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -167,12 +167,13 @@ export default function AddProductPage() {
               <select
                 id="category"
                 value={category}
-                onChange={(e) => setCategory(e.target.value as "mdf" | "pouch" | "magnet")}
+                onChange={(e) => setCategory(e.target.value as "mdf" | "pouch" | "magnet" | "rakhis")}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-hidden focus:border-accent font-sans text-sm text-slate-800 transition-colors bg-white"
               >
                 <option value="mdf">MDF Board Art</option>
                 <option value="pouch">Hand-painted Pouch</option>
                 <option value="magnet">Fridge Magnet</option>
+                <option value="rakhis">Handmade Rakhi</option>
               </select>
             </div>
 

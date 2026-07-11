@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types/product";
-import { ShoppingBag, Box, Clipboard, Compass, Plus } from "lucide-react";
+import { ShoppingBag, Box, Clipboard, Compass, Plus, Gift } from "lucide-react";
 
 interface DashboardClientProps {
   products: Product[];
@@ -17,6 +17,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
   const mdfCount = products.filter((p) => p.category === "mdf").length;
   const pouchCount = products.filter((p) => p.category === "pouch").length;
   const magnetCount = products.filter((p) => p.category === "magnet").length;
+  const rakhiCount = products.filter((p) => p.category === "rakhis").length;
 
   const filteredProducts =
     selectedCategory === "all"
@@ -63,6 +64,16 @@ export default function DashboardClient({ products }: DashboardClientProps) {
       activeBorder: "border-rose-500",
       activeBg: "bg-rose-500/[0.04]",
       activeRing: "focus:ring-rose-500/40",
+    },
+    {
+      id: "rakhis",
+      title: "Handmade Rakhis",
+      value: rakhiCount,
+      icon: Gift,
+      color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+      activeBorder: "border-emerald-500",
+      activeBg: "bg-emerald-500/[0.04]",
+      activeRing: "focus:ring-emerald-500/40",
     },
   ];
 
@@ -132,6 +143,8 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                       ? "MDF Board Arts"
                       : selectedCategory === "pouch"
                       ? "Hand-painted Pouches"
+                      : selectedCategory === "rakhis"
+                      ? "Handmade Rakhis"
                       : "Fridge Magnets"
                   }`}
             </h2>
@@ -190,6 +203,8 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                             ? "MDF Art"
                             : product.category === "pouch"
                             ? "Pouch"
+                            : product.category === "rakhis"
+                            ? "Rakhi"
                             : "Magnet"}
                         </span>
                       </td>
@@ -246,7 +261,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                     </span>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="capitalize text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                        {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : "Magnet"}
+                        {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : product.category === "rakhis" ? "Rakhi" : "Magnet"}
                       </span>
                       {product.featured && (
                         <span className="inline-block text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-1.5 py-0.5 rounded-sm">

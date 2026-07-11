@@ -7,7 +7,7 @@ export interface Product {
   id: string;
   title: string;
   price: number;
-  category: "mdf" | "pouch" | "magnet";
+  category: "mdf" | "pouch" | "magnet" | "rakhis";
   description: string;
   image_url: string;
   featured: boolean;

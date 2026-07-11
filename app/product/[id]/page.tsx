@@ -53,6 +53,13 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
           "Protective finish: Glossy or matte clear glaze coat",
           "Scratch Protection: Velvet felt layer to prevent fridge scratches",
         ];
+      case "rakhis":
+        return [
+          "Base Material: Premium threads and handcrafted embellishments",
+          "Artistry: Intricate hand-woven or hand-painted details",
+          "Comfort: Skin-friendly soft cotton thread/dori",
+          "Packaging: Comes with a beautiful card and eco-friendly pouch",
+        ];
       default:
         return [
           "100% handcrafted in small batches",
@@ -70,6 +77,8 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
         return "Hand-wash in cold water with mild detergent. Do not wring or tumble dry. Shape and dry flat in shade. Iron on reverse side on low heat if needed.";
       case "magnet":
         return "Clean with a dry cloth. Do not drop on hard surfaces as clay or pine slices can chip. Store in a dry place away from direct moisture.";
+      case "rakhis":
+        return "Keep dry. Avoid contact with water, perfume, or chemicals. Store in the provided pouch to prevent thread tangling and preserve paint details.";
       default:
         return "Handle with care as this is an original hand-painted creation. Clean with a soft, dry cloth. Keep away from direct moisture and water.";
     }
@@ -94,7 +103,7 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
           className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/50 hover:text-accent font-medium mb-6 md:mb-10 transition-colors duration-300 group"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-          <span>Back to {product.category === "mdf" ? "MDF Arts" : product.category === "pouch" ? "Hand-painted Pouches" : "Fridge Magnets"}</span>
+          <span>Back to {product.category === "mdf" ? "MDF Arts" : product.category === "pouch" ? "Hand-painted Pouches" : product.category === "rakhis" ? "Handmade Rakhis" : "Fridge Magnets"}</span>
         </Link>
 
         {/* Product Details Grid */}
@@ -121,7 +130,7 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
             <div className="space-y-3 order-1 lg:order-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-widest text-accent font-semibold">
-                  {product.category === "mdf" ? "MDF Board Art" : product.category === "pouch" ? "Hand-painted Pouch" : "Fridge Magnet"}
+                  {product.category === "mdf" ? "MDF Board Art" : product.category === "pouch" ? "Hand-painted Pouch" : product.category === "rakhis" ? "Handmade Rakhi" : "Fridge Magnet"}
                 </span>
                 <span className="text-[9px] text-foreground/40">•</span>
                 <span className="text-[10px] uppercase tracking-wider text-accent-secondary font-medium">

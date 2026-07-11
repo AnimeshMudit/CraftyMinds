@@ -99,7 +99,7 @@ export default function FeaturedCreations() {
                     </span>
                   </div>
                   <p className="text-[10px] uppercase tracking-widest text-foreground/50 font-medium">
-                    {product.category === "mdf" ? "MDF Board Art" : product.category === "pouch" ? "Hand-painted Pouch" : "Fridge Magnet"}
+                    {product.category === "mdf" ? "MDF Board Art" : product.category === "pouch" ? "Hand-painted Pouch" : product.category === "rakhis" ? "Handmade Rakhi" : "Fridge Magnet"}
                   </p>
                 </div>
               </Link>

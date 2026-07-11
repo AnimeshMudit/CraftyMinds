@@ -30,6 +30,12 @@ export default function Home() {
       imageSrc: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783102042086_ChatGPT_Image_Jul_3__2026__11_36_43_PM.png",
       href: "/magnets",
     },
+    {
+      title: "Handmade Rakhis",
+      description: "Celebrate the sacred sibling bond with handcrafted designer rakhis made from premium threads, delicate beads, and hand-painted charms.",
+      imageSrc: "/images/rakhi_showcase.jpg",
+      href: "/rakhis",
+    },
   ];
 
   return (
@@ -55,12 +61,12 @@ export default function Home() {
               Explore Our Collections
             </h2>
             <p className="text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
-              Browse through our three signature collections. Select any collection card to explore our individual hand-painted designs and product details.
+              Browse through our handcrafted collections. Select any collection card to explore our individual hand-painted designs and product details.
             </p>
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
             {categories.map((category, idx) => (
               <motion.div
                 key={idx}

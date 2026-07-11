@@ -49,6 +49,11 @@ export default function Footer() {
                 Fridge Magnets
               </Link>
             </li>
+            <li>
+              <Link href="/rakhis" className="hover:text-accent transition-colors duration-300">
+                Handmade Rakhis
+              </Link>
+            </li>
           </ul>
         </div>
 

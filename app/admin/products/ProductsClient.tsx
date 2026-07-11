@@ -122,7 +122,7 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
                     {/* Category */}
                     <td className="py-4 px-6">
                       <span className="capitalize text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
-                        {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : "Magnet"}
+                        {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : product.category === "rakhis" ? "Rakhi" : "Magnet"}
                       </span>
                     </td>
                     
@@ -203,7 +203,7 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
                   <span className="font-semibold text-slate-800 block truncate text-base">{product.title}</span>
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="capitalize text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                      {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : "Magnet"}
+                      {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : product.category === "rakhis" ? "Rakhi" : "Magnet"}
                     </span>
                     {product.featured && (
                       <span className="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-1.5 py-0.5 rounded-sm">
