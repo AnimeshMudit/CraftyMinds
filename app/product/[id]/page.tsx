@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 import { getProduct, getProducts } from "@/lib/supabase/products";
 import ProductCard from "@/components/ProductCard";
 import CollapsibleSection from "@/components/CollapsibleSection";
-import { MessageSquare, Shield, Sparkles, RefreshCw, ChevronLeft } from "lucide-react";
+import ProductPurchaseSection from "@/components/ProductPurchaseSection";
+import { Shield, Sparkles, RefreshCw, ChevronLeft } from "lucide-react";
 
 interface ProductPageProps {
   params: Promise<{
@@ -86,12 +87,6 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
 
   const features = getFeatures(product.category);
   const careInstructions = getCareInstructions(product.category);
-
-  // Formulate WhatsApp message URL
-  const waNumber = "919140194290";
-  const waBaseUrl = "https://wa.me/";
-  const messageText = `Hi Crafty Mind Studio! I am interested in ordering the "${product.title}" (Product ID: ${product.id}, Price: ₹${product.price}). Is it available?`;
-  const whatsappUrl = `${waBaseUrl}${waNumber}?text=${encodeURIComponent(messageText)}`;
 
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-24 bg-background">
@@ -195,23 +190,9 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
               </CollapsibleSection>
             </div>
 
-            {/* Large WhatsApp Order CTA and Trust factors grouped */}
+            {/* Large Interactive Purchase CTA Section */}
             <div className="order-2 lg:order-6 space-y-6 pt-2 lg:pt-0">
-              {/* Button */}
-              <div className="space-y-4">
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-3 py-4 lg:py-5 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5"
-                >
-                  <MessageSquare size={18} className="text-white" />
-                  <span>Place Order via WhatsApp</span>
-                </a>
-                <p className="text-[10px] uppercase tracking-widest text-foreground/40 text-center font-sans">
-                  Secure checkout and customization details will be finalized directly in chat.
-                </p>
-              </div>
+              <ProductPurchaseSection product={product} />
 
               {/* Trust factors */}
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border-custom/50 text-[10px] uppercase tracking-widest text-foreground/50 text-center font-medium font-sans">

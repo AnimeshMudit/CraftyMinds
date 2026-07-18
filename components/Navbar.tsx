@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import CartButton from "@/components/Cart/CartButton";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -53,7 +54,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-10">
+        <nav className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -74,6 +75,8 @@ export default function Navbar() {
             );
           })}
           
+          <CartButton />
+          
           <a
             href="https://wa.me/919140194290?text=Hi%2C%20I%20am%20interested%20in%20your%20handcrafted%20products!"
             target="_blank"
@@ -84,14 +87,17 @@ export default function Navbar() {
           </a>
         </nav>
 
-        {/* Mobile menu trigger */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 text-foreground/80 hover:text-foreground transition-colors duration-300"
-          aria-label={isOpen ? "Close Menu" : "Open Menu"}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Actions (Cart & Hamburger) */}
+        <div className="flex md:hidden items-center space-x-1">
+          <CartButton />
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 text-foreground/80 hover:text-foreground transition-colors duration-300 cursor-pointer"
+            aria-label={isOpen ? "Close Menu" : "Open Menu"}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile drawer */}
