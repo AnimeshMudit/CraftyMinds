@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, Menu, X, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Menu, X, ArrowLeft, ClipboardList } from "lucide-react";
 import { ToastProvider } from "@/components/admin/Toast";
 
 export default function AdminLayout({
@@ -17,6 +17,7 @@ export default function AdminLayout({
   const menuItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/products", label: "Products", icon: ShoppingBag },
+    { href: "/admin/orders", label: "Orders", icon: ClipboardList },
   ];
 
   if (pathname === "/admin/login") {
