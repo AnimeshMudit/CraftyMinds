@@ -268,21 +268,15 @@ export default function CheckoutPage() {
               throw new Error(verifyData.error || "Payment verification failed.");
             }
 
-            // Verification successful
-            alert(
-              `🎉 Payment completed and verified successfully!\n\n` +
-              `Thank you for your order.\n\n` +
-              `Order Number: ${orderNumber}\n` +
-              `Payment ID: ${response.razorpay_payment_id}`
-            );
-
             // Clear the local cart
             clearCart();
 
+            // Set state to avoid unused warning and redirect to the professional order confirmation page
             setCreatedOrder({
               id: orderId,
               number: orderNumber,
             });
+            router.push(`/order-confirmation/${orderNumber}`);
           } catch (err) {
             console.error("Payment verification failure:", err);
             setSubmitError(
