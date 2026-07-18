@@ -19,6 +19,36 @@ interface CheckoutFormData {
   landmark: string;
 }
 
+interface RazorpaySuccessResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
+}
+
+interface RazorpayWindow extends Window {
+  Razorpay?: new (options: Record<string, unknown>) => {
+    open: () => void;
+  };
+}
+
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") {
+      resolve(false);
+      return;
+    }
+    if ((window as unknown as RazorpayWindow).Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, isLoaded, cartSubtotal } = useCart();
@@ -144,7 +174,14 @@ export default function CheckoutPage() {
     setSubmitError(null);
 
     try {
-      const response = await fetch("/api/orders", {
+      // 1. Load Razorpay Checkout Script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error("Failed to load Razorpay Checkout SDK. Please verify your internet connection.");
+      }
+
+      // 2. Create the internal order in Supabase
+      const orderResponse = await fetch("/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,18 +206,75 @@ export default function CheckoutPage() {
         }),
       });
 
-      const data = await response.json();
+      const orderData = await orderResponse.json();
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Failed to create order.");
+      if (!orderResponse.ok || !orderData.success) {
+        throw new Error(orderData.error || "Failed to create internal order.");
       }
 
-      setCreatedOrder({
-        id: data.orderId,
-        number: data.orderNumber,
+      const { orderId, orderNumber } = orderData;
+
+      // 3. Create the payment order on Razorpay
+      const paymentResponse = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: cartSubtotal,
+          orderId: orderNumber, // Send friendly internal order number
+        }),
       });
+
+      const paymentData = await paymentResponse.json();
+
+      if (!paymentResponse.ok || !paymentData.success) {
+        throw new Error(paymentData.error || "Failed to initialize payment gateway order.");
+      }
+
+      const { razorpayOrderId, key, amountInPaise, currency } = paymentData;
+
+      // 4. Load Razorpay Checkout Popup
+      const options: Record<string, unknown> = {
+        key: key,
+        amount: amountInPaise,
+        currency: currency,
+        name: "Crafty Minds",
+        description: "Handmade Crafts Order",
+        order_id: razorpayOrderId,
+        handler: function (response: RazorpaySuccessResponse) {
+          console.log("Razorpay payment success response:", response);
+          alert(
+            `🎉 Payment completed successfully!\n\n` +
+            `Your payment has been received and will be verified securely.\n\n` +
+            `Payment ID: ${response.razorpay_payment_id}\n` +
+            `Order ID: ${orderNumber}`
+          );
+          setCreatedOrder({
+            id: orderId,
+            number: orderNumber,
+          });
+        },
+        prefill: {
+          name: formData.fullName,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: {
+          color: "#A56A43", // Warm terracotta accent matching globals.css
+        },
+        modal: {
+          ondismiss: function () {
+            console.log("Razorpay payment checkout window closed by user.");
+          }
+        }
+      };
+
+      const rzp = new (window as unknown as RazorpayWindow).Razorpay!(options);
+      rzp.open();
+
     } catch (err) {
-      console.error("Order creation error:", err);
+      console.error("Order payment process error:", err);
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
       setSubmitError(errorMessage);
     } finally {
@@ -587,7 +681,7 @@ export default function CheckoutPage() {
                       className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
                     >
                       {isSubmitting ? (
-                        <span className="animate-pulse">Creating Order...</span>
+                        <span className="animate-pulse">Preparing Secure Payment...</span>
                       ) : (
                         <>
                           <CreditCard size={16} />
