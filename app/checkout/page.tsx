@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CreditCard, ShieldCheck, AlertCircle, Check } from "lucide-react";
+import { ArrowLeft, CreditCard, AlertCircle, Check } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 
 interface CheckoutFormData {
@@ -51,7 +51,7 @@ const loadRazorpayScript = () => {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, isLoaded, cartSubtotal } = useCart();
+  const { cart, isLoaded, cartSubtotal, clearCart } = useCart();
 
   const [formData, setFormData] = useState<CheckoutFormData>({
     fullName: "",
@@ -242,18 +242,56 @@ export default function CheckoutPage() {
         name: "Crafty Minds",
         description: "Handmade Crafts Order",
         order_id: razorpayOrderId,
-        handler: function (response: RazorpaySuccessResponse) {
+        handler: async function (response: RazorpaySuccessResponse) {
           console.log("Razorpay payment success response:", response);
-          alert(
-            `🎉 Payment completed successfully!\n\n` +
-            `Your payment has been received and will be verified securely.\n\n` +
-            `Payment ID: ${response.razorpay_payment_id}\n` +
-            `Order ID: ${orderNumber}`
-          );
-          setCreatedOrder({
-            id: orderId,
-            number: orderNumber,
-          });
+          
+          setIsSubmitting(true);
+          setSubmitError(null);
+          
+          try {
+            const verifyResponse = await fetch("/api/payment/verify", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                orderId: orderId, // Internal UUID
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (!verifyResponse.ok || !verifyData.success) {
+              throw new Error(verifyData.error || "Payment verification failed.");
+            }
+
+            // Verification successful
+            alert(
+              `🎉 Payment completed and verified successfully!\n\n` +
+              `Thank you for your order.\n\n` +
+              `Order Number: ${orderNumber}\n` +
+              `Payment ID: ${response.razorpay_payment_id}`
+            );
+
+            // Clear the local cart
+            clearCart();
+
+            setCreatedOrder({
+              id: orderId,
+              number: orderNumber,
+            });
+          } catch (err) {
+            console.error("Payment verification failure:", err);
+            setSubmitError(
+              "Your payment could not be verified automatically.\n\n" +
+              "If the amount has been deducted, please contact our support team with your Order Number and Payment ID so we can assist you."
+            );
+          } finally {
+            setIsSubmitting(false);
+          }
         },
         prefill: {
           name: formData.fullName,
@@ -660,11 +698,14 @@ export default function CheckoutPage() {
                       <Check size={20} />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-serif text-lg font-semibold text-emerald-800">Order Created Successfully</h4>
+                      <h4 className="font-serif text-lg font-semibold text-emerald-800">Order Confirmed</h4>
                       <p className="font-sans text-xs text-emerald-700">Order Number: <strong className="font-semibold">{createdOrder.number}</strong></p>
-                      <p className="font-sans text-[11px] text-emerald-600/80 mt-1">
-                        Your order has been created successfully in Supabase and is ready for payment. In the next phase, the secure Razorpay payment flow will be integrated here.
-                      </p>
+                      <div className="font-sans text-[11px] text-emerald-600/80 mt-2 space-y-2">
+                        <p className="font-semibold text-emerald-800">Payment verified successfully.</p>
+                        <p>Thank you for shopping with Crafty Minds.</p>
+                        <p>Your order has been confirmed and is now being processed.</p>
+                        <p>We&apos;ll contact you if any additional information is required.</p>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -689,15 +730,6 @@ export default function CheckoutPage() {
                         </>
                       )}
                     </button>
-
-                    {/* Inline Notice about Razorpay Integration */}
-                    <div className="bg-accent/5 border border-accent/15 rounded-2xl p-4 flex gap-3 text-[11px] font-sans leading-relaxed text-accent">
-                      <ShieldCheck size={18} className="shrink-0 mt-0.5 text-accent-secondary animate-pulse" />
-                      <div>
-                        <span className="font-bold block uppercase tracking-wider text-[9px] mb-0.5">Development Integration Phase</span>
-                        This page validates details before processing. In the next phase, clicking this will initiate the Razorpay Secure Checkout popup.
-                      </div>
-                    </div>
                   </>
                 )}
               </div>
