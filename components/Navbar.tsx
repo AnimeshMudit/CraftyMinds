@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/pouches", label: "Pouches" },
   { href: "/magnets", label: "Magnets" },
   { href: "/rakhis", label: "Rakhis" },
+  { href: "/track-order", label: "Track Order" },
 ];
 
 export default function Navbar() {
