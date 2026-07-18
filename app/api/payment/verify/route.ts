@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { sendOrderEmails } from "@/lib/email/resend";
+import { Order } from "@/types/order";
 import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
       })
       .eq("id", orderId)
       .eq("payment_status", "pending")
-      .select("id")
+      .select("*")
       .maybeSingle();
 
     if (updateError) {
@@ -80,6 +82,10 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // 4. Send customer & admin order verification emails (asynchronous operational notifications)
+    // Email transmission failures are caught internally and will NOT block successful client responses.
+    await sendOrderEmails(updatedOrder as Order);
 
     return NextResponse.json({
       success: true

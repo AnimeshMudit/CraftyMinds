@@ -15,7 +15,8 @@
     "next": "15.5.19",
     "razorpay": "^2.9.8",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "resend": "^6.17.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
