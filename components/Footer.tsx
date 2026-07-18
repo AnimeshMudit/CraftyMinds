@@ -99,6 +99,14 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mt-8 pt-6 md:mt-16 md:pt-8 border-t border-border-custom/50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-foreground/50 tracking-wider">
         <p>© {currentYear} CRAFTY MIND STUDIO. ALL RIGHTS RESERVED.</p>
+        
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 uppercase text-[10px] font-medium text-foreground/60">
+          <Link href="/privacy-policy" className="hover:text-accent transition-colors">Privacy Policy</Link>
+          <Link href="/terms-and-conditions" className="hover:text-accent transition-colors">Terms & Conditions</Link>
+          <Link href="/shipping-policy" className="hover:text-accent transition-colors">Shipping Policy</Link>
+          <Link href="/refund-policy" className="hover:text-accent transition-colors">Refund Policy</Link>
+        </div>
+        
         <p className="flex items-center gap-1">
           Lovingly hand-painted & stitched.
         </p>
