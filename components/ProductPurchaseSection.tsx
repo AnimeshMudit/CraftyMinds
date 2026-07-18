@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { Product } from "@/types/product";
-import { MessageSquare, ShoppingBag, Check } from "lucide-react";
+import { ShoppingBag, Check } from "lucide-react";
 import QuantitySelector from "./Cart/QuantitySelector";
 
 interface ProductPurchaseSectionProps {
@@ -32,11 +32,6 @@ export default function ProductPurchaseSection({ product }: ProductPurchaseSecti
       setIsAdded(false);
     }, 2000);
   };
-
-  const waNumber = "919140194290";
-  const waBaseUrl = "https://wa.me/";
-  const messageText = `Hi Crafty Mind Studio! I am interested in ordering the "${product.title}" (Product ID: ${product.id}, Price: ₹${product.price}). Is it available?`;
-  const whatsappUrl = `${waBaseUrl}${waNumber}?text=${encodeURIComponent(messageText)}`;
 
   return (
     <div className="space-y-6">
@@ -77,22 +72,6 @@ export default function ProductPurchaseSection({ product }: ProductPurchaseSecti
             )}
           </button>
         </div>
-      </div>
-
-      {/* WhatsApp Button */}
-      <div className="space-y-4">
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full flex items-center justify-center gap-3 py-4 lg:py-5 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
-        >
-          <MessageSquare size={18} className="text-white" />
-          <span>Place Order via WhatsApp</span>
-        </a>
-        <p className="text-[10px] uppercase tracking-widest text-foreground/40 text-center font-sans">
-          Instant checkout and customization details can also be finalized directly in chat.
-        </p>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Instagram, MessageSquare, Mail } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -63,17 +63,6 @@ export default function Footer() {
           <ul className="space-y-3.5 text-sm text-foreground/70">
             <li>
               <a
-                href="https://wa.me/919140194290?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20your%20handcrafted%20products!"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
-              >
-                <MessageSquare size={16} className="text-accent group-hover:scale-110 transition-transform duration-300" />
-                <span>WhatsApp chat</span>
-              </a>
-            </li>
-            <li>
-              <a
                 href="https://instagram.com/craftymindstudio"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -85,11 +74,11 @@ export default function Footer() {
             </li>
             <li>
               <a
-                href="mailto:hello@craftymindstudio.com"
+                href="mailto:craftymindstudios@gmail.com"
                 className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
               >
                 <Mail size={16} className="text-accent group-hover:scale-110 transition-transform duration-300" />
-                <span>hello@craftymindstudio.com</span>
+                <span>craftymindstudios@gmail.com</span>
               </a>
             </li>
           </ul>

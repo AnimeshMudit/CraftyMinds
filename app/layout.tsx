@@ -19,7 +19,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Crafty Mind Studio | Handcrafted with Love",
-  description: "Beautiful hand-painted MDF Board Arts, hand-painted pouches, and adorable fridge magnets. Lovingly handmade by a real artisan. Order directly on WhatsApp.",
+  description: "Beautiful hand-painted MDF Board Arts, hand-painted pouches, and adorable fridge magnets. Lovingly handmade by a real artisan. Order securely on our website.",
 };
 
 export default function RootLayout({

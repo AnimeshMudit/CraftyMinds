@@ -86,7 +86,7 @@ export default function TermsAndConditionsPage() {
             If you need clarification regarding any part of these Terms and Conditions, please contact us:
           </p>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mt-2 space-y-1 font-sans text-sm">
-            <p><strong>Email:</strong> hello@craftymindstudio.com</p>
+            <p><strong>Email:</strong> craftymindstudios@gmail.com</p>
             <p><strong>Address:</strong> Crafty Minds Studio, Uttar Pradesh, India</p>
           </div>
         </div>

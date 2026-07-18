@@ -2,19 +2,10 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, Instagram, Mail } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 
 export default function CTASection() {
   const contactMethods = [
-    {
-      icon: MessageCircle,
-      title: "WhatsApp Chat",
-      label: "+91 91401 94290",
-      description: "Chat with us directly to discuss customizations and place orders instantly.",
-      href: "https://wa.me/919140194290?text=Hi%2C%20I%20am%20interested%20in%20discussing%20a%20personalized%20or%20customized%20order%20with%20you!",
-      colorClass: "hover:border-[#25D366]/40 group-hover:text-[#25D366]",
-      btnText: "Send Message",
-    },
     {
       icon: Instagram,
       title: "Instagram DM",
@@ -27,9 +18,9 @@ export default function CTASection() {
     {
       icon: Mail,
       title: "Email Inquiry",
-      label: "hello@craftymindstudio.com",
+      label: "craftymindstudios@gmail.com",
       description: "Send us an email for bulk gifting queries, design proposals, or questions.",
-      href: "mailto:hello@craftymindstudio.com",
+      href: "mailto:craftymindstudios@gmail.com?subject=Crafty%20Mind%20Studio%20Inquiry",
       colorClass: "hover:border-accent/40 group-hover:text-accent",
       btnText: "Write Email",
     },
@@ -57,12 +48,12 @@ export default function CTASection() {
           </h2>
           
           <p className="text-foreground/75 text-sm sm:text-base max-w-xl leading-relaxed font-sans font-light">
-            We love bringing your custom ideas to life! Whether you want a personalized welcome plaque, custom fabric pouches, or magnets for a special occasion, reach out to us through any channel below.
+            We love bringing your custom ideas to life! Whether you want a personalized welcome plaque, custom fabric pouches, or magnets for a special occasion, reach out to us through email or Instagram DM.
           </p>
         </motion.div>
 
         {/* Contact Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 max-w-3xl mx-auto">
           {contactMethods.map((method, idx) => {
             const Icon = method.icon;
             return (
@@ -106,7 +97,7 @@ export default function CTASection() {
         </div>
 
         <p className="text-[10px] uppercase tracking-widest text-foreground/40 text-center pt-8 md:pt-12 font-sans font-medium">
-          Response time: Usually within an hour
+          Response time: Usually within 1–2 business days
         </p>
       </div>
     </section>

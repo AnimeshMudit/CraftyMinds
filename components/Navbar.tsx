@@ -79,9 +79,7 @@ export default function Navbar() {
           <CartButton />
           
           <a
-            href="https://wa.me/919140194290?text=Hi%2C%20I%20am%20interested%20in%20your%20handcrafted%20products!"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="mailto:craftymindstudios@gmail.com?subject=Crafty%20Mind%20Studio%20Inquiry"
             className="px-6 py-2.5 rounded-full text-xs uppercase tracking-widest bg-accent text-white font-medium hover:bg-accent/90 transition-all duration-300 shadow-xs hover:shadow-md hover:-translate-y-0.5"
           >
             Say Hello
@@ -129,13 +127,11 @@ export default function Navbar() {
               })}
               <hr className="border-border-custom/50 my-2" />
               <a
-                href="https://wa.me/919140194290?text=Hi%2C%20I%20am%20interested%20in%20your%20handcrafted%20products!"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="mailto:craftymindstudios@gmail.com?subject=Crafty%20Mind%20Studio%20Inquiry"
                 onClick={() => setIsOpen(false)}
                 className="w-full text-center py-3.5 rounded-xl text-sm uppercase tracking-wider bg-accent text-white font-medium hover:bg-accent/90 transition-all duration-300 shadow-sm"
               >
-                Contact via WhatsApp
+                Say Hello
               </a>
             </nav>
           </motion.div>

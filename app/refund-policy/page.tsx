@@ -91,8 +91,8 @@ export default function RefundPolicyPage() {
             For refund queries or to submit proof of damage, please reach out to us:
           </p>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mt-2 space-y-1 font-sans text-sm">
-            <p><strong>Email:</strong> hello@craftymindstudio.com</p>
-            <p><strong>WhatsApp Support:</strong> +91 9140194290</p>
+            <p><strong>Email:</strong> craftymindstudios@gmail.com</p>
+            <p><strong>Instagram:</strong> @craftymindstudio</p>
           </div>
         </div>
 

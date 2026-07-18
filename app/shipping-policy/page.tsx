@@ -91,8 +91,8 @@ export default function ShippingPolicyPage() {
             For any concerns regarding dispatch schedules or address corrections, please reach out:
           </p>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mt-2 space-y-1 font-sans text-sm">
-            <p><strong>Email:</strong> hello@craftymindstudio.com</p>
-            <p><strong>WhatsApp Support:</strong> +91 9140194290 (10 AM to 6 PM)</p>
+            <p><strong>Email:</strong> craftymindstudios@gmail.com</p>
+            <p><strong>Instagram:</strong> @craftymindstudio</p>
           </div>
         </div>
 

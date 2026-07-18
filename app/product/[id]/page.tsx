@@ -152,7 +152,7 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
                 <div className="space-y-1">
                   <h4 className="text-xs uppercase tracking-wider font-semibold text-accent-secondary">Customizable Design</h4>
                   <p className="text-foreground/80 text-xs sm:text-sm font-light font-sans leading-relaxed">
-                    This design is hand-painted to order. You can request custom colors, family names, dimensions, or custom inscriptions when you contact us on WhatsApp!
+                    This design is hand-painted to order. You can request custom colors, family names, dimensions, or custom inscriptions by emailing us at craftymindstudios@gmail.com!
                   </p>
                 </div>
               </div>

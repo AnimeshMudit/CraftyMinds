@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Search, Heart, MessageCircle, Package } from "lucide-react";
+import { Search, Heart, Mail, Package } from "lucide-react";
 
 const steps = [
   {
@@ -16,9 +16,9 @@ const steps = [
     description: "Select a design that speaks to you, or decide on custom details like name plates or specific color palettes.",
   },
   {
-    icon: MessageCircle,
+    icon: Mail,
     title: "Contact Us",
-    description: "Reach out via WhatsApp or Instagram to share your choice and any personalized requests you have in mind.",
+    description: "Reach out via Email or Instagram to share your choice and any personalized requests you have in mind.",
   },
   {
     icon: Package,
