@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CreditCard, ShieldCheck, AlertCircle } from "lucide-react";
+import { ArrowLeft, CreditCard, ShieldCheck, AlertCircle, Check } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 
 interface CheckoutFormData {
@@ -36,6 +36,9 @@ export default function CheckoutPage() {
   });
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [createdOrder, setCreatedOrder] = useState<{ id: string; number: string } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoaded && cart.length === 0) {
@@ -100,7 +103,7 @@ export default function CheckoutPage() {
     formData.pinCode.trim() !== "" &&
     !hasErrors;
 
-  const handleProceedPayment = (e: React.FormEvent) => {
+  const handleProceedPayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) {
       // Mark all required fields as touched
@@ -136,12 +139,53 @@ export default function CheckoutPage() {
       }
       return;
     }
-    
-    alert(
-      "🎉 Customer Information and Shipping details validated successfully!\n\n" +
-      "This is a placeholder for Razorpay Gateway Integration.\n" +
-      "In the next phase, clicking this will initiate the secure checkout popup."
-    );
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customer: {
+            fullName: formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+          },
+          address: {
+            houseFlat: formData.houseFlat,
+            street: formData.street,
+            landmark: formData.landmark || undefined,
+            city: formData.city,
+            state: formData.state,
+            pinCode: formData.pinCode,
+          },
+          items: cart,
+          subtotal: cartSubtotal,
+          total: cartSubtotal, // Shipping is free, total matches subtotal
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to create order.");
+      }
+
+      setCreatedOrder({
+        id: data.orderId,
+        number: data.orderNumber,
+      });
+    } catch (err) {
+      console.error("Order creation error:", err);
+      const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
+      setSubmitError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const shipping = 0;
@@ -514,24 +558,54 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Razorpay Placeholder Button */}
+              {/* Razorpay Placeholder Button or Order Success Block */}
               <div className="pt-2 space-y-4">
-                <button
-                  type="submit"
-                  className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
-                >
-                  <CreditCard size={16} />
-                  <span>Proceed to Payment</span>
-                </button>
-
-                {/* Inline Notice about Razorpay Integration */}
-                <div className="bg-accent/5 border border-accent/15 rounded-2xl p-4 flex gap-3 text-[11px] font-sans leading-relaxed text-accent">
-                  <ShieldCheck size={18} className="shrink-0 mt-0.5 text-accent-secondary animate-pulse" />
-                  <div>
-                    <span className="font-bold block uppercase tracking-wider text-[9px] mb-0.5">Development Integration Phase</span>
-                    This page validates details before processing. In the next phase, clicking this will initiate the Razorpay Secure Checkout popup.
+                {createdOrder ? (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 text-center space-y-3 animate-fadeIn">
+                    <div className="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-xs">
+                      <Check size={20} />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-serif text-lg font-semibold text-emerald-800">Order Created Successfully</h4>
+                      <p className="font-sans text-xs text-emerald-700">Order Number: <strong className="font-semibold">{createdOrder.number}</strong></p>
+                      <p className="font-sans text-[11px] text-emerald-600/80 mt-1">
+                        Your order has been created successfully in Supabase and is ready for payment. In the next phase, the secure Razorpay payment flow will be integrated here.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <>
+                    {submitError && (
+                      <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-2 text-xs text-red-700 font-sans">
+                        <AlertCircle className="shrink-0 mt-0.5 text-red-500" size={16} />
+                        <span>{submitError}</span>
+                      </div>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        <span className="animate-pulse">Creating Order...</span>
+                      ) : (
+                        <>
+                          <CreditCard size={16} />
+                          <span>Proceed to Payment</span>
+                        </>
+                      )}
+                    </button>
+
+                    {/* Inline Notice about Razorpay Integration */}
+                    <div className="bg-accent/5 border border-accent/15 rounded-2xl p-4 flex gap-3 text-[11px] font-sans leading-relaxed text-accent">
+                      <ShieldCheck size={18} className="shrink-0 mt-0.5 text-accent-secondary animate-pulse" />
+                      <div>
+                        <span className="font-bold block uppercase tracking-wider text-[9px] mb-0.5">Development Integration Phase</span>
+                        This page validates details before processing. In the next phase, clicking this will initiate the Razorpay Secure Checkout popup.
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
