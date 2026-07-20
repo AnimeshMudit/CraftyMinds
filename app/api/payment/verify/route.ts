@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { sendOrderEmails } from "@/lib/email/resend";
 import { Order } from "@/types/order";
@@ -81,6 +82,28 @@ export async function POST(req: NextRequest) {
         { success: false, error: "Order not found or payment status is not pending." },
         { status: 400 }
       );
+    }
+
+    // Set guest confirmation cookie
+    const secret = process.env.CUSTOMER_SESSION_SECRET;
+    if (!secret) {
+      console.error(
+        `[Configuration Error] CUSTOMER_SESSION_SECRET environment variable is missing on the server. Unable to set guest confirmation signature cookie for order ${updatedOrder.order_number}.`
+      );
+    } else if (updatedOrder.order_number) {
+      const confirmationSignature = crypto
+        .createHmac("sha256", secret)
+        .update(updatedOrder.order_number)
+        .digest("hex");
+      
+      const cookieStore = await cookies();
+      cookieStore.set(`guest_confirm_${updatedOrder.order_number}`, confirmationSignature, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: `/order-confirmation/${updatedOrder.order_number}`,
+        maxAge: 1800, // 30 minutes
+      });
     }
 
     // 4. Send customer & admin order verification emails (asynchronous operational notifications)

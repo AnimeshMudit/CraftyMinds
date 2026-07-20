@@ -26,4 +26,5 @@ export interface Order {
   razorpay_payment_id: string | null;
   razorpay_order_id: string | null;
   updated_at?: string;
+  user_id?: string | null;
 }
