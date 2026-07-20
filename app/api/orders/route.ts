@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { getCustomerSession } from "@/lib/auth/customer-session-server";
 
 // Helper to generate a sequential order number
 async function generateOrderNumber(supabase: SupabaseClient): Promise<string> {
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { customer, address, items, subtotal, total } = body;
+    const customerSession = await getCustomerSession();
 
     // 1. Validation: Required customer fields exist
     if (!customer || !customer.fullName || !customer.email || !customer.phone) {
@@ -98,6 +100,7 @@ export async function POST(req: NextRequest) {
       customer_name: customer.fullName,
       email: customer.email,
       phone: customer.phone,
+      user_id: customerSession?.user.id ?? null,
       house_flat: address.houseFlat,
       street: address.street,
       landmark: address.landmark || null,
@@ -125,6 +128,18 @@ export async function POST(req: NextRequest) {
         { success: false, error: "Internal server error. Failed to save order record." },
         { status: 500 }
       );
+    }
+
+    if (customerSession?.user.email) {
+      const { error: linkError } = await supabase
+        .from("orders")
+        .update({ user_id: customerSession.user.id })
+        .eq("email", customerSession.user.email)
+        .is("user_id", null);
+
+      if (linkError) {
+        console.error("Failed to associate existing guest orders:", linkError);
+      }
     }
 
     return NextResponse.json({
