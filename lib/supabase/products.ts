@@ -2,6 +2,26 @@ import { supabase } from "@/lib/supabase";
 import { Product } from "@/types/product";
 
 /**
+ * Normalizes and parses the specifications field from the database to ensure it's always an array.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseProduct(product: any): Product {
+  if (!product) return product;
+  let specifications = product.specifications;
+  if (typeof specifications === "string") {
+    try {
+      specifications = JSON.parse(specifications);
+    } catch {
+      specifications = [];
+    }
+  }
+  return {
+    ...product,
+    specifications: Array.isArray(specifications) ? specifications : [],
+  };
+}
+
+/**
  * Fetch all products from the products table, ordered by created_at desc.
  */
 export async function getProducts(): Promise<Product[]> {
@@ -15,7 +35,7 @@ export async function getProducts(): Promise<Product[]> {
     throw new Error(error.message);
   }
 
-  return data || [];
+  return (data || []).map(parseProduct);
 }
 
 /**
@@ -33,7 +53,7 @@ export async function getProduct(id: string): Promise<Product | null> {
     throw new Error(error.message);
   }
 
-  return data;
+  return data ? parseProduct(data) : null;
 }
 
 /**
@@ -53,7 +73,7 @@ export async function createProduct(
     throw new Error(error.message);
   }
 
-  return data;
+  return parseProduct(data);
 }
 
 /**
@@ -75,8 +95,9 @@ export async function updateProduct(
     throw new Error(error.message);
   }
 
-  return data;
+  return parseProduct(data);
 }
+
 
 /**
  * Delete a product by ID.

@@ -2,6 +2,26 @@ import { createServerSupabaseClient } from "./server";
 import { Product } from "@/types/product";
 
 /**
+ * Normalizes and parses the specifications field from the database to ensure it's always an array.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseProduct(product: any): Product {
+  if (!product) return product;
+  let specifications = product.specifications;
+  if (typeof specifications === "string") {
+    try {
+      specifications = JSON.parse(specifications);
+    } catch {
+      specifications = [];
+    }
+  }
+  return {
+    ...product,
+    specifications: Array.isArray(specifications) ? specifications : [],
+  };
+}
+
+/**
  * Fetch all products from the products table on the server, ordered by created_at desc.
  */
 export async function getProductsServer(): Promise<Product[]> {
@@ -16,7 +36,7 @@ export async function getProductsServer(): Promise<Product[]> {
     throw new Error(error.message);
   }
 
-  return data || [];
+  return (data || []).map(parseProduct);
 }
 
 /**
@@ -35,7 +55,7 @@ export async function getProductServer(id: string): Promise<Product | null> {
     throw new Error(error.message);
   }
 
-  return data;
+  return data ? parseProduct(data) : null;
 }
 
 /**
@@ -56,7 +76,7 @@ export async function createProductServer(
     throw new Error(error.message);
   }
 
-  return data;
+  return parseProduct(data);
 }
 
 /**
@@ -79,7 +99,7 @@ export async function updateProductServer(
     throw new Error(error.message);
   }
 
-  return data;
+  return parseProduct(data);
 }
 
 /**
