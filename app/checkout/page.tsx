@@ -28,6 +28,19 @@ interface RazorpaySuccessResponse {
 interface RazorpayWindow extends Window {
   Razorpay?: new (options: Record<string, unknown>) => {
     open: () => void;
+    on: (
+      event: string,
+      callback: (response: {
+        error: {
+          code?: string;
+          description?: string;
+          source?: string;
+          step?: string;
+          reason?: string;
+          metadata?: Record<string, unknown>;
+        };
+      }) => void
+    ) => void;
   };
 }
 
@@ -67,6 +80,7 @@ export default function CheckoutPage() {
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [createdOrder, setCreatedOrder] = useState<{ id: string; number: string } | null>(null);
+  const [activeOrder, setActiveOrder] = useState<{ id: string; number: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -133,8 +147,8 @@ export default function CheckoutPage() {
     formData.pinCode.trim() !== "" &&
     !hasErrors;
 
-  const handleProceedPayment = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleProceedPayment = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!isFormValid) {
       // Mark all required fields as touched
       const allTouched: Record<string, boolean> = {
@@ -180,39 +194,80 @@ export default function CheckoutPage() {
         throw new Error("Failed to load Razorpay Checkout SDK. Please verify your internet connection.");
       }
 
-      // 2. Create the internal order in Supabase
-      const orderResponse = await fetch("/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customer: {
-            fullName: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
-          },
-          address: {
-            houseFlat: formData.houseFlat,
-            street: formData.street,
-            landmark: formData.landmark || undefined,
-            city: formData.city,
-            state: formData.state,
-            pinCode: formData.pinCode,
-          },
-          items: cart,
-          subtotal: cartSubtotal,
-          total: cartSubtotal, // Shipping is free, total matches subtotal
-        }),
-      });
+      let orderId = activeOrder?.id;
+      let orderNumber = activeOrder?.number;
 
-      const orderData = await orderResponse.json();
+      if (!orderId || !orderNumber) {
+        // 2. Create the internal order in Supabase
+        const orderResponse = await fetch("/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customer: {
+              fullName: formData.fullName,
+              email: formData.email,
+              phone: formData.phone,
+            },
+            address: {
+              houseFlat: formData.houseFlat,
+              street: formData.street,
+              landmark: formData.landmark || undefined,
+              city: formData.city,
+              state: formData.state,
+              pinCode: formData.pinCode,
+            },
+            items: cart,
+            subtotal: cartSubtotal,
+            total: cartSubtotal, // Shipping is free, total matches subtotal
+          }),
+        });
 
-      if (!orderResponse.ok || !orderData.success) {
-        throw new Error(orderData.error || "Failed to create internal order.");
+        const orderData = await orderResponse.json();
+
+        if (!orderResponse.ok || !orderData.success) {
+          throw new Error(orderData.error || "Failed to create internal order.");
+        }
+
+        orderId = orderData.orderId;
+        orderNumber = orderData.orderNumber;
+        setActiveOrder({ id: orderId!, number: orderNumber! });
+      } else {
+        // We have an active order. Let's update its database status back to 'pending'
+        // and optionally update form details in case they corrected any typos.
+        const patchResponse = await fetch("/api/orders", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            payment_status: "pending",
+            customer: {
+              fullName: formData.fullName,
+              email: formData.email,
+              phone: formData.phone,
+            },
+            address: {
+              houseFlat: formData.houseFlat,
+              street: formData.street,
+              landmark: formData.landmark || undefined,
+              city: formData.city,
+              state: formData.state,
+              pinCode: formData.pinCode,
+            },
+          }),
+        });
+        const patchData = await patchResponse.json();
+        if (!patchResponse.ok || !patchData.success) {
+          throw new Error(patchData.error || "Failed to initialize payment retry.");
+        }
       }
 
-      const { orderId, orderNumber } = orderData;
+      if (!orderId || !orderNumber) {
+        throw new Error("Failed to initialize order details.");
+      }
 
       // 3. Create the payment order on Razorpay
       const paymentResponse = await fetch("/api/payment/create-order", {
@@ -273,8 +328,8 @@ export default function CheckoutPage() {
 
             // Set state to avoid unused warning and redirect to the professional order confirmation page
             setCreatedOrder({
-              id: orderId,
-              number: orderNumber,
+              id: orderId!,
+              number: orderNumber!,
             });
             router.push(`/order-confirmation/${orderNumber}`);
           } catch (err) {
@@ -296,13 +351,69 @@ export default function CheckoutPage() {
           color: "#A56A43", // Warm terracotta accent matching globals.css
         },
         modal: {
-          ondismiss: function () {
+          ondismiss: async function () {
             console.log("Razorpay payment checkout window closed by user.");
+            setIsSubmitting(false);
+            setSubmitError("Payment was cancelled. Your order has not been completed.");
+            
+            // Mark order as failed in database
+            if (orderId) {
+              try {
+                await fetch("/api/orders", {
+                  method: "PATCH",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    orderId: orderId,
+                    payment_status: "failed",
+                  }),
+                });
+              } catch (err) {
+                console.error("Failed to update status on dismiss:", err);
+              }
+            }
           }
         }
       };
 
       const rzp = new (window as unknown as RazorpayWindow).Razorpay!(options);
+      
+      rzp.on("payment.failed", async function (response: {
+        error: {
+          code?: string;
+          description?: string;
+          source?: string;
+          step?: string;
+          reason?: string;
+          metadata?: Record<string, unknown>;
+        };
+      }) {
+        console.error("Razorpay payment failure response:", response.error);
+        setIsSubmitting(false);
+        setSubmitError(
+          `Payment Failed: ${response.error.description || "The payment could not be processed."} (Error Code: ${response.error.code || "unknown"})`
+        );
+        
+        // Mark order as failed in database
+        if (orderId) {
+          try {
+            await fetch("/api/orders", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                orderId: orderId,
+                payment_status: "failed",
+              }),
+            });
+          } catch (err) {
+            console.error("Failed to update status on payment failure:", err);
+          }
+        }
+      });
+
       rzp.open();
 
     } catch (err) {
@@ -702,28 +813,55 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
-                ) : (
+                 ) : (
                   <>
                     {submitError && (
                       <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-2 text-xs text-red-700 font-sans">
                         <AlertCircle className="shrink-0 mt-0.5 text-red-500" size={16} />
-                        <span>{submitError}</span>
+                        <span className="whitespace-pre-line">{submitError}</span>
                       </div>
                     )}
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
-                    >
-                      {isSubmitting ? (
-                        <span className="animate-pulse">Preparing Secure Payment...</span>
-                      ) : (
-                        <>
-                          <CreditCard size={16} />
-                          <span>Proceed to Payment</span>
-                        </>
-                      )}
-                    </button>
+                    {activeOrder ? (
+                      <div className="space-y-3 font-sans">
+                        <button
+                          type="button"
+                          onClick={() => handleProceedPayment()}
+                          disabled={isSubmitting}
+                          className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
+                        >
+                          {isSubmitting ? (
+                            <span className="animate-pulse">Preparing Secure Payment...</span>
+                          ) : (
+                            <>
+                              <CreditCard size={16} />
+                              <span>Retry Payment</span>
+                            </>
+                          )}
+                        </button>
+                        
+                        <Link
+                          href="/cart"
+                          className="w-full flex items-center justify-center gap-3 py-4 rounded-full border border-slate-300 hover:bg-slate-55 text-foreground font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-xs hover:shadow-md hover:-translate-y-0.5 text-center cursor-pointer font-sans"
+                        >
+                          Return to Cart
+                        </Link>
+                      </div>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
+                      >
+                        {isSubmitting ? (
+                          <span className="animate-pulse">Preparing Secure Payment...</span>
+                        ) : (
+                          <>
+                            <CreditCard size={16} />
+                            <span>Proceed to Payment</span>
+                          </>
+                        )}
+                      </button>
+                    )}
                   </>
                 )}
               </div>

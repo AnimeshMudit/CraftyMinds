@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     // 3. Database Update
     const supabase = createServerSupabaseClient();
 
-    // Perform updates only on pending payments
+    // Perform updates only on pending, failed, or expired payments
     const { data: updatedOrder, error: updateError } = await supabase
       .from("orders")
       .update({
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .eq("id", orderId)
-      .eq("payment_status", "pending")
+      .in("payment_status", ["pending", "failed", "expired"])
       .select("*")
       .maybeSingle();
 

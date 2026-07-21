@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { expirePendingOrders } from "@/lib/supabase/expire-orders";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,6 +26,9 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = createServerSupabaseClient();
+
+    // Clean up any abandoned pending orders
+    await expirePendingOrders(supabase);
 
     // 2. Query Supabase: match both order_number and email case-insensitively
     // We select only tracking-relevant fields. Never expose signatures, IDs, or metadata.

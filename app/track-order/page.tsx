@@ -137,9 +137,26 @@ export default function TrackOrderPage() {
 
               {/* Status Badges */}
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center text-[9px] font-bold tracking-wide uppercase px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50">
-                  {order.payment_status === "paid" ? "Paid" : "Pending"}
-                </span>
+                {order.payment_status === "paid" && (
+                  <span className="inline-flex items-center text-[9px] font-bold tracking-wide uppercase px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+                    Paid
+                  </span>
+                )}
+                {order.payment_status === "pending" && (
+                  <span className="inline-flex items-center text-[9px] font-bold tracking-wide uppercase px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50">
+                    Pending
+                  </span>
+                )}
+                {order.payment_status === "failed" && (
+                  <span className="inline-flex items-center text-[9px] font-bold tracking-wide uppercase px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200/50">
+                    Failed
+                  </span>
+                )}
+                {order.payment_status === "expired" && (
+                  <span className="inline-flex items-center text-[9px] font-bold tracking-wide uppercase px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200/50">
+                    Expired
+                  </span>
+                )}
                 <span className="inline-flex items-center text-[9px] font-bold tracking-wide uppercase px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 capitalize">
                   {order.order_status}
                 </span>

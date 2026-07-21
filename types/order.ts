@@ -21,7 +21,7 @@ export interface Order {
   items: OrderItem[];
   subtotal: number;
   total: number;
-  payment_status: "pending" | "paid" | "failed";
+  payment_status: "pending" | "paid" | "failed" | "expired";
   order_status: "pending" | "processing" | "shipped" | "delivered";
   razorpay_payment_id: string | null;
   razorpay_order_id: string | null;
