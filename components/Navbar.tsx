@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -127,11 +128,13 @@ export default function Navbar() {
               >
                 <span className="w-10 h-10 rounded-full overflow-hidden bg-accent/10 text-accent flex items-center justify-center font-semibold text-xs shrink-0">
                   {avatarUrl ? (
-                    <img
+                    <Image
                       src={avatarUrl}
                       alt={displayName}
+                      width={40}
+                      height={40}
                       className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
+                      unoptimized
                     />
                   ) : (
                     <span>{initials}</span>
@@ -208,11 +211,13 @@ export default function Navbar() {
               aria-label="Open profile"
             >
               {avatarUrl ? (
-                <img
+                <Image
                   src={avatarUrl}
                   alt={displayName}
+                  width={40}
+                  height={40}
                   className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
+                  unoptimized
                 />
               ) : (
                 <span>{initials}</span>
@@ -268,7 +273,14 @@ export default function Navbar() {
                   <div className="flex items-center gap-3 px-1 pb-2">
                     <span className="w-12 h-12 rounded-full overflow-hidden bg-accent/10 flex items-center justify-center text-accent font-semibold">
                       {avatarUrl ? (
-                        <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        <Image
+                          src={avatarUrl}
+                          alt={displayName}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                          unoptimized
+                        />
                       ) : (
                         <span>{initials}</span>
                       )}

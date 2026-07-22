@@ -12,8 +12,10 @@ import {
   Check,
   ClipboardList
 } from "lucide-react";
+import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
 export default function TrackOrderPage() {
+  const { user, isLoading } = useCustomerAuth();
   const [orderNumber, setOrderNumber] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -116,6 +118,39 @@ export default function TrackOrderPage() {
       }
     ];
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-24 bg-background animate-pulse">
+        <div className="w-12 h-12 rounded-full bg-border-custom/50 mx-auto" />
+        <div className="h-4 w-32 bg-border-custom/50 rounded mx-auto mt-4" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-50/50 pt-28 pb-16 font-sans text-slate-800 flex items-center justify-center">
+        <div className="max-w-md mx-auto bg-white rounded-3xl border border-slate-200/85 p-8 text-center shadow-xs space-y-6 font-sans">
+          <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto">
+            <AlertCircle size={32} />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-serif text-2xl font-semibold text-slate-800">Sign In Required</h2>
+            <p className="text-slate-500 text-sm font-sans font-light">
+              You must be logged in to track your orders. Sign in to view and track your purchase history.
+            </p>
+          </div>
+          <Link
+            href="/login?next=/track-order"
+            className="inline-flex items-center justify-center gap-2 w-full py-3.5 bg-accent hover:bg-accent/90 text-white font-medium rounded-full text-sm transition-all shadow-xs hover:shadow-md cursor-pointer"
+          >
+            Sign In to Account
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 pt-28 pb-16 font-sans text-slate-800">

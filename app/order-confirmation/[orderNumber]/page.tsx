@@ -1,8 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { cookies } from "next/headers";
-import crypto from "crypto";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getCustomerSession } from "@/lib/auth/customer-session-server";
 import { Order } from "@/types/order";
@@ -40,37 +38,10 @@ export default async function OrderConfirmationPage({ params }: RouteParams) {
   let isAuthorized = false;
 
   if (order) {
-    // 1. Try validating as a guest user using the signed cookie
-    const cookieStore = await cookies();
-    const guestConfirmCookie = cookieStore.get(`guest_confirm_${orderNumber}`)?.value;
-
-    if (guestConfirmCookie) {
-      const secret = process.env.CUSTOMER_SESSION_SECRET;
-      if (!secret) {
-        console.error(
-          `[Configuration Error] CUSTOMER_SESSION_SECRET environment variable is missing on the server. Unable to verify guest confirmation signature for order ${orderNumber}.`
-        );
-      } else {
-        const expectedSignature = crypto
-          .createHmac("sha256", secret)
-          .update(orderNumber)
-          .digest("hex");
-
-        const expectedBuffer = Buffer.from(expectedSignature, "utf8");
-        const clientBuffer = Buffer.from(guestConfirmCookie, "utf8");
-
-        if (expectedBuffer.length === clientBuffer.length) {
-          isAuthorized = crypto.timingSafeEqual(expectedBuffer, clientBuffer);
-        }
-      }
-    }
-
-    // 2. If guest authorization failed, try validating as the authenticated owner of the order
-    if (!isAuthorized) {
-      const customerSession = await getCustomerSession();
-      if (customerSession && order.user_id === customerSession.user.id) {
-        isAuthorized = true;
-      }
+    // Validate as the authenticated owner of the order
+    const customerSession = await getCustomerSession();
+    if (customerSession && order.user_id === customerSession.user.id) {
+      isAuthorized = true;
     }
   }
 

@@ -10,7 +10,6 @@ interface CategoryCardProps {
   description: string;
   imageSrc: string;
   href: string;
-  countLabel?: string;
 }
 
 export default function CategoryCard({
@@ -18,7 +17,6 @@ export default function CategoryCard({
   description,
   imageSrc,
   href,
-  countLabel,
 }: CategoryCardProps) {
   return (
     <Link href={href} className="group block space-y-2 md:space-y-4">

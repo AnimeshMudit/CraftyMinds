@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Crafty Mind Studio
+
+A premium Next.js e-commerce storefront for handcrafted arts (MDF Arts, Pouches, Magnets, and Rakhis). Built with Next.js, Tailwind CSS, Supabase, and Razorpay.
+
+## Features
+- **Storefront**: Premium, dynamic catalog filtering and product detail views.
+- **Cart & Checkout**: Real-time persistent shopping cart supporting guest and logged-in checkouts.
+- **Razorpay Integration**: Seamless payment flows with support for payment recovery, retries, and automatic failed-order cleanup.
+- **Secure Authentication**: Consolidated Supabase auth synchronization with server cookies, protecting admin and customer dashboards.
+- **Guest Order Linking**: Automatically links historical guest orders with newly created/logged-in customer accounts sharing the same email address.
+
+---
+
+## Environment Variables
+
+To run this application locally or in production, configure the following environment variables in your `.env.local` or hosting provider:
+
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=            # Your public Supabase project URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=       # Your public Supabase anonymous key
+SUPABASE_SERVICE_ROLE_KEY=           # Supabase service role key (keep secret, server-only)
+
+# Authentication Secrets
+ADMIN_PASSWORD=                      # Password for the admin dashboard session encryption
+CUSTOMER_SESSION_SECRET=             # 64-character hex string for signing customer cookies
+
+# Razorpay Integration
+NEXT_PUBLIC_RAZORPAY_KEY_ID=         # Public Razorpay key ID
+RAZORPAY_KEY_ID=                     # Secret Razorpay key ID
+RAZORPAY_KEY_SECRET=                 # Razorpay key secret (keep secret, server-only)
+
+# Email Notifications
+RESEND_API_KEY=                      # Resend service API key
+FROM_EMAIL=                          # Source email for transactional updates (e.g., craftymindstudio@gmail.com)
+```
+
+---
 
 ## Getting Started
 
-First, run the development server:
-
+### 1. Install Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Run the Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the storefront.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Build for Production
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Production Deployment Checklist
+1. Configure all required environment variables in your hosting provider (e.g., Vercel, Netlify).
+2. Configure Razorpay webhooks pointing to your production host `/api/payment/verify` endpoint.
+3. Keep database indexes up-to-date in Supabase (specifically `orders(user_id)` and `orders(email)`).

@@ -52,28 +52,6 @@ async function bootstrapCustomerData(session: CustomerSessionPayload) {
     console.error("Failed to bootstrap customer profile:", profileError);
   }
 
-  if (session.user.email) {
-    // Check if there are any unlinked orders for this email first
-    const { data: unlinkedOrders, error: checkError } = await serviceSupabase
-      .from("orders")
-      .select("id")
-      .eq("email", session.user.email)
-      .is("user_id", null)
-      .limit(1);
-
-    if (!checkError && unlinkedOrders && unlinkedOrders.length > 0) {
-      const { error: orderError } = await serviceSupabase
-        .from("orders")
-        .update({ user_id: session.user.id })
-        .eq("email", session.user.email)
-        .is("user_id", null);
-
-      if (orderError) {
-        console.error("Failed to associate existing guest orders:", orderError);
-      }
-    }
-  }
-
   return toProfilePayload(session, session.user.avatarUrl);
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
 import { decryptSession } from "./lib/auth/session";
 import {
   CUSTOMER_SESSION_COOKIE_NAME,
@@ -27,14 +28,39 @@ function getAnonSupabaseClient() {
 }
 
 function isCustomerProtectedPath(pathname: string) {
-  return pathname === "/profile" || pathname.startsWith("/profile/") || pathname === "/my-orders" || pathname.startsWith("/my-orders/");
+  return (
+    pathname === "/checkout" ||
+    pathname.startsWith("/checkout/") ||
+    pathname === "/profile" ||
+    pathname.startsWith("/profile/") ||
+    pathname === "/my-orders" ||
+    pathname.startsWith("/my-orders/")
+  );
 }
 
-function redirectToLogin(request: NextRequest) {
+function copyCookies(from: NextResponse, to: NextResponse) {
+  from.cookies.getAll().forEach((cookie) => {
+    to.cookies.set(cookie.name, cookie.value, {
+      path: cookie.path,
+      domain: cookie.domain,
+      maxAge: cookie.maxAge,
+      secure: cookie.secure,
+      httpOnly: cookie.httpOnly,
+      sameSite: cookie.sameSite as any,
+    });
+  });
+  return to;
+}
+
+function redirectToLogin(request: NextRequest, supabaseResponse: NextResponse) {
   const loginUrl = new URL("/login", request.url);
   const nextPath = `${request.nextUrl.pathname}${request.nextUrl.search}`;
   loginUrl.searchParams.set("next", nextPath);
   const response = NextResponse.redirect(loginUrl);
+  
+  // Copy cookies from supabaseResponse (which has the refreshed Supabase session)
+  copyCookies(supabaseResponse, response);
+  
   response.cookies.delete(CUSTOMER_SESSION_COOKIE_NAME);
   return response;
 }
@@ -72,17 +98,46 @@ async function refreshCustomerSession(payload: CustomerSessionPayload) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  let supabaseResponse = NextResponse.next({
+    request,
+  });
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (supabaseUrl && supabaseAnonKey) {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    });
+
+    // Refresh the Supabase SSR session if necessary
+    await supabase.auth.getUser();
+  }
+
   // Protect every route beginning with /admin, EXCEPT /admin/login
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const sessionToken = request.cookies.get("admin_session")?.value;
 
     if (!sessionToken) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+      return copyCookies(supabaseResponse, NextResponse.redirect(new URL("/admin/login", request.url)));
     }
 
     const payload = await decryptSession(sessionToken);
     if (!payload) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+      return copyCookies(supabaseResponse, NextResponse.redirect(new URL("/admin/login", request.url)));
     }
   }
 
@@ -90,21 +145,21 @@ export async function middleware(request: NextRequest) {
     const sessionToken = request.cookies.get(CUSTOMER_SESSION_COOKIE_NAME)?.value;
 
     if (!sessionToken) {
-      return redirectToLogin(request);
+      return redirectToLogin(request, supabaseResponse);
     }
 
     const payload = await decryptCustomerSession(sessionToken);
     if (!payload) {
-      return redirectToLogin(request);
+      return redirectToLogin(request, supabaseResponse);
     }
 
     if (isCustomerSessionExpired(payload)) {
       const refreshedSession = await refreshCustomerSession(payload);
       if (!refreshedSession) {
-        return redirectToLogin(request);
+        return redirectToLogin(request, supabaseResponse);
       }
 
-      const response = NextResponse.next();
+      const response = copyCookies(supabaseResponse, NextResponse.next());
       response.cookies.set(CUSTOMER_SESSION_COOKIE_NAME, await encryptCustomerSession(refreshedSession), {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -116,10 +171,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  return supabaseResponse;
 }
 
 // Config to run middleware only on relevant paths
 export const config = {
-  matcher: ["/admin/:path*", "/profile/:path*", "/my-orders/:path*"],
+  matcher: ["/admin/:path*", "/profile/:path*", "/my-orders/:path*", "/checkout/:path*"],
 };
+

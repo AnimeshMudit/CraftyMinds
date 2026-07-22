@@ -43,6 +43,13 @@ export async function POST(req: NextRequest) {
     const { customer, address, items, subtotal, total } = body;
     const customerSession = await getCustomerSession();
 
+    if (!customerSession) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Guest checkout is not allowed." },
+        { status: 401 }
+      );
+    }
+
     // 1. Validation: Required customer fields exist
     if (!customer || !customer.fullName || !customer.email || !customer.phone) {
       return NextResponse.json(
@@ -108,7 +115,7 @@ export async function POST(req: NextRequest) {
         customer_name: customer.fullName,
         email: customer.email,
         phone: customer.phone,
-        user_id: customerSession?.user.id ?? null,
+        user_id: customerSession.user.id,
         house_flat: address.houseFlat,
         street: address.street,
         landmark: address.landmark || null,
@@ -172,6 +179,14 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
     const { orderId, payment_status, customer, address } = body;
+    const customerSession = await getCustomerSession();
+
+    if (!customerSession) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized." },
+        { status: 401 }
+      );
+    }
 
     if (!orderId || !payment_status) {
       return NextResponse.json(
@@ -213,6 +228,7 @@ export async function PATCH(req: NextRequest) {
       .from("orders")
       .update(updateFields)
       .eq("id", orderId)
+      .eq("user_id", customerSession.user.id)
       .select("id, order_number, payment_status")
       .maybeSingle();
 

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CreditCard, AlertCircle, Check } from "lucide-react";
+import { ArrowLeft, CreditCard, AlertCircle, Check, Plus } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
 interface CheckoutFormData {
   fullName: string;
@@ -17,6 +18,19 @@ interface CheckoutFormData {
   state: string;
   pinCode: string;
   landmark: string;
+}
+
+interface Address {
+  id: string;
+  full_name: string;
+  phone: string;
+  house_flat: string;
+  street: string;
+  landmark?: string | null;
+  city: string;
+  state: string;
+  pin_code: string;
+  is_default: boolean;
 }
 
 interface RazorpaySuccessResponse {
@@ -62,9 +76,20 @@ const loadRazorpayScript = () => {
   });
 };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
   const { cart, isLoaded, cartSubtotal, clearCart } = useCart();
+  const { user, profile } = useCustomerAuth();
+
+  // Saved addresses state
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [isAddressesLoading, setIsAddressesLoading] = useState(true);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+
+  // Address entry state controls
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [saveForFuture, setSaveForFuture] = useState(true);
 
   const [formData, setFormData] = useState<CheckoutFormData>({
     fullName: "",
@@ -84,11 +109,101 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Load addresses
+  const loadAddresses = useCallback(async () => {
+    setIsAddressesLoading(true);
+    try {
+      const res = await fetch("/api/customer/addresses");
+      const data = await res.json();
+      if (data.success && data.addresses && data.addresses.length > 0) {
+        setAddresses(data.addresses);
+        // Find default or first address
+        const defaultAddr = data.addresses.find((a: Address) => a.is_default) || data.addresses[0];
+        setSelectedAddressId(defaultAddr.id);
+        setFormData({
+          fullName: defaultAddr.full_name,
+          email: user?.email || "",
+          phone: defaultAddr.phone,
+          houseFlat: defaultAddr.house_flat,
+          street: defaultAddr.street,
+          landmark: defaultAddr.landmark || "",
+          city: defaultAddr.city,
+          state: defaultAddr.state,
+          pinCode: defaultAddr.pin_code,
+        });
+        setIsAddingNewAddress(false);
+        setEditingAddressId(null);
+      } else {
+        setAddresses([]);
+        setIsAddingNewAddress(true);
+        setEditingAddressId(null);
+      }
+    } catch (err) {
+      console.error("Failed to load saved addresses:", err);
+      setIsAddingNewAddress(true);
+    } finally {
+      setIsAddressesLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadAddresses();
+    }
+  }, [user, loadAddresses]);
+
+  // Autofill name and email when adding new address
+  useEffect(() => {
+    if (user && isAddingNewAddress && !editingAddressId) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || profile?.full_name || "",
+        email: user?.email || "",
+      }));
+    }
+  }, [user, profile, isAddingNewAddress, editingAddressId]);
+
+  // Redirect to cart if empty
   useEffect(() => {
     if (isLoaded && cart.length === 0) {
       router.push("/cart");
     }
   }, [isLoaded, cart, router]);
+
+  const handleSelectAddress = (addr: Address) => {
+    setSelectedAddressId(addr.id);
+    setEditingAddressId(null);
+    setIsAddingNewAddress(false);
+    setFormData({
+      fullName: addr.full_name,
+      email: user?.email || "",
+      phone: addr.phone,
+      houseFlat: addr.house_flat,
+      street: addr.street,
+      landmark: addr.landmark || "",
+      city: addr.city,
+      state: addr.state,
+      pinCode: addr.pin_code,
+    });
+    setTouched({});
+  };
+
+  const handleEditAddress = (addr: Address) => {
+    setEditingAddressId(addr.id);
+    setIsAddingNewAddress(false);
+    setFormData({
+      fullName: addr.full_name,
+      email: user?.email || "",
+      phone: addr.phone,
+      houseFlat: addr.house_flat,
+      street: addr.street,
+      landmark: addr.landmark || "",
+      city: addr.city,
+      state: addr.state,
+      pinCode: addr.pin_code,
+    });
+    setTouched({});
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -188,7 +303,40 @@ export default function CheckoutPage() {
     setSubmitError(null);
 
     try {
-      // 1. Load Razorpay Checkout Script
+      // 1. If form is active, save address in background first
+      if (isAddingNewAddress || editingAddressId) {
+        try {
+          const payload = {
+            id: editingAddressId || undefined,
+            fullName: formData.fullName.trim(),
+            phone: formData.phone.trim(),
+            houseFlat: formData.houseFlat.trim(),
+            street: formData.street.trim(),
+            landmark: formData.landmark ? formData.landmark.trim() : undefined,
+            city: formData.city.trim(),
+            state: formData.state.trim(),
+            pinCode: formData.pinCode.trim(),
+            isDefault: addresses.length === 0,
+          };
+
+          const method = editingAddressId ? "PATCH" : "POST";
+          if (editingAddressId || saveForFuture) {
+            const res = await fetch("/api/customer/addresses", {
+              method,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+              console.error("Background address save failed:", data.error);
+            }
+          }
+        } catch (addrErr) {
+          console.error("Error saving address details in background:", addrErr);
+        }
+      }
+
+      // 2. Load Razorpay Checkout Script
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         throw new Error("Failed to load Razorpay Checkout SDK. Please verify your internet connection.");
@@ -198,7 +346,7 @@ export default function CheckoutPage() {
       let orderNumber = activeOrder?.number;
 
       if (!orderId || !orderNumber) {
-        // 2. Create the internal order in Supabase
+        // 3. Create the internal order in Supabase
         const orderResponse = await fetch("/api/orders", {
           method: "POST",
           headers: {
@@ -235,7 +383,6 @@ export default function CheckoutPage() {
         setActiveOrder({ id: orderId!, number: orderNumber! });
       } else {
         // We have an active order. Let's update its database status back to 'pending'
-        // and optionally update form details in case they corrected any typos.
         const patchResponse = await fetch("/api/orders", {
           method: "PATCH",
           headers: {
@@ -269,7 +416,7 @@ export default function CheckoutPage() {
         throw new Error("Failed to initialize order details.");
       }
 
-      // 3. Create the payment order on Razorpay
+      // 4. Create the payment order on Razorpay
       const paymentResponse = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: {
@@ -289,7 +436,7 @@ export default function CheckoutPage() {
 
       const { razorpayOrderId, key, amountInPaise, currency } = paymentData;
 
-      // 4. Load Razorpay Checkout Popup
+      // 5. Load Razorpay Checkout Popup
       const options: Record<string, unknown> = {
         key: key,
         amount: amountInPaise,
@@ -326,7 +473,7 @@ export default function CheckoutPage() {
             // Clear the local cart
             clearCart();
 
-            // Set state to avoid unused warning and redirect to the professional order confirmation page
+            // Set state and redirect to the confirmation page
             setCreatedOrder({
               id: orderId!,
               number: orderNumber!,
@@ -439,6 +586,8 @@ export default function CheckoutPage() {
     );
   }
 
+  const isFormActive = isAddingNewAddress || editingAddressId || addresses.length === 0;
+
   return (
     <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-background min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
@@ -481,7 +630,8 @@ export default function CheckoutPage() {
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     placeholder="Enter your full name"
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
+                    disabled={!isFormActive}
+                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all disabled:opacity-80 ${
                       touched.fullName && errors.fullName
                         ? "border-red-400 focus:ring-red-400"
                         : "border-border-custom"
@@ -494,34 +644,23 @@ export default function CheckoutPage() {
                   )}
                 </div>
 
-                {/* Email */}
-                <div className="space-y-1.5">
+                {/* Email (Always Read-only & prefilled) */}
+                <div className="space-y-1.5 md:col-span-2">
                   <label htmlFor="email" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
-                    Email Address <span className="text-red-500">*</span>
+                    Email Address
                   </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    placeholder="name@example.com"
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
-                      touched.email && errors.email
-                        ? "border-red-400 focus:ring-red-400"
-                        : "border-border-custom"
-                    }`}
+                    readOnly
+                    className="w-full px-4 py-3 rounded-xl border border-border-custom bg-slate-50 text-sm text-foreground/60 focus:outline-none cursor-not-allowed"
                   />
-                  {touched.email && errors.email && (
-                    <p className="text-[11px] text-red-500 flex items-center gap-1">
-                      <AlertCircle size={12} /> {errors.email}
-                    </p>
-                  )}
                 </div>
 
                 {/* Phone */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 md:col-span-2">
                   <label htmlFor="phone" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
@@ -533,7 +672,8 @@ export default function CheckoutPage() {
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     placeholder="10-digit mobile number"
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
+                    disabled={!isFormActive}
+                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all disabled:opacity-80 ${
                       touched.phone && errors.phone
                         ? "border-red-400 focus:ring-red-400"
                         : "border-border-custom"
@@ -548,193 +688,327 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Shipping Address Block */}
-            <div className="bg-white rounded-3xl border border-border-custom p-6 md:p-8 shadow-xs space-y-6">
-              <h2 className="font-serif text-xl md:text-2xl tracking-wide text-foreground border-b border-border-custom/60 pb-3">
-                Shipping Address
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 font-sans">
-                {/* House/Flat */}
-                <div className="space-y-1.5 md:col-span-2">
-                  <label htmlFor="houseFlat" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
-                    Flat, House No., Building, Apartment <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="houseFlat"
-                    name="houseFlat"
-                    value={formData.houseFlat}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    placeholder="e.g. Apartment 4B, Sunflower Residency"
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
-                      touched.houseFlat && errors.houseFlat
-                        ? "border-red-400 focus:ring-red-400"
-                        : "border-border-custom"
-                    }`}
-                  />
-                  {touched.houseFlat && errors.houseFlat && (
-                    <p className="text-[11px] text-red-500 flex items-center gap-1">
-                      <AlertCircle size={12} /> {errors.houseFlat}
-                    </p>
+            {/* Reusable Address Selector */}
+            {!isAddressesLoading && addresses.length > 0 && (
+              <div className="bg-white rounded-3xl border border-border-custom p-6 md:p-8 shadow-xs space-y-6">
+                <div className="flex justify-between items-center border-b border-border-custom/60 pb-3">
+                  <h2 className="font-serif text-xl md:text-2xl tracking-wide text-foreground">
+                    Select Shipping Location
+                  </h2>
+                  {!isAddingNewAddress && !editingAddressId ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingNewAddress(true);
+                        setEditingAddressId(null);
+                        setFormData({
+                          fullName: profile?.full_name || "",
+                          email: user?.email || "",
+                          phone: "",
+                          houseFlat: "",
+                          street: "",
+                          landmark: "",
+                          city: "",
+                          state: "",
+                          pinCode: "",
+                        });
+                        setTouched({});
+                      }}
+                      className="inline-flex items-center gap-1 text-xs uppercase tracking-wider font-semibold text-accent hover:text-accent/80 transition-colors cursor-pointer"
+                    >
+                      <Plus size={14} /> Add New
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const active = addresses.find((a) => a.id === selectedAddressId) || addresses[0];
+                        handleSelectAddress(active);
+                      }}
+                      className="text-xs uppercase tracking-wider font-semibold text-foreground/60 hover:text-foreground transition-colors cursor-pointer"
+                    >
+                      Use Saved Address
+                    </button>
                   )}
                 </div>
 
-                {/* Street/Locality */}
-                <div className="space-y-1.5 md:col-span-2">
-                  <label htmlFor="street" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
-                    Area, Street, Sector, Village <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="street"
-                    name="street"
-                    value={formData.street}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    placeholder="e.g. 5th Main, Sector 7, HSR Layout"
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
-                      touched.street && errors.street
-                        ? "border-red-400 focus:ring-red-400"
-                        : "border-border-custom"
-                    }`}
-                  />
-                  {touched.street && errors.street && (
-                    <p className="text-[11px] text-red-500 flex items-center gap-1">
-                      <AlertCircle size={12} /> {errors.street}
-                    </p>
-                  )}
-                </div>
+                {(!isAddingNewAddress && !editingAddressId) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
+                    {addresses.map((addr) => {
+                      const isSelected = selectedAddressId === addr.id;
+                      return (
+                        <div
+                          key={addr.id}
+                          onClick={() => handleSelectAddress(addr)}
+                          className={`bg-white border rounded-2xl p-5 shadow-xs flex flex-col justify-between cursor-pointer transition-all duration-300 ${
+                            isSelected
+                              ? "border-accent ring-1 ring-accent"
+                              : "border-border-custom hover:border-foreground/20"
+                          }`}
+                        >
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-start gap-2">
+                              <h4 className="font-serif text-base font-semibold text-slate-800 truncate">
+                                {addr.full_name}
+                              </h4>
+                              {isSelected && (
+                                <span className="inline-flex items-center gap-0.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/25">
+                                  <Check size={9} /> Selected
+                                </span>
+                              )}
+                            </div>
 
-                {/* Landmark */}
-                <div className="space-y-1.5 md:col-span-2">
-                  <label htmlFor="landmark" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
-                    Landmark <span className="text-foreground/40 text-[10px] font-normal lowercase">(Optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="landmark"
-                    name="landmark"
-                    value={formData.landmark}
-                    onChange={handleInputChange}
-                    placeholder="e.g. Near HDFC Bank ATM"
-                    className="w-full px-4 py-3 rounded-xl border border-border-custom bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all animate-none"
-                  />
-                </div>
+                            <div className="text-xs text-foreground/75 space-y-1 font-light leading-relaxed">
+                              <p className="font-medium text-foreground">{addr.house_flat}, {addr.street}</p>
+                              {addr.landmark && <p className="italic text-foreground/50">Landmark: {addr.landmark}</p>}
+                              <p>{addr.city}, {addr.state} - {addr.pin_code}</p>
+                              <p className="pt-1.5 flex items-center gap-1 font-normal text-foreground/90">
+                                <span className="font-semibold text-foreground/50 text-[10px] uppercase tracking-wider">Phone:</span> {addr.phone}
+                              </p>
+                            </div>
+                          </div>
 
-                {/* City */}
-                <div className="space-y-1.5">
-                  <label htmlFor="city" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
-                    Town / City <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    placeholder="Enter city"
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
-                      touched.city && errors.city
-                        ? "border-red-400 focus:ring-red-400"
-                        : "border-border-custom"
-                    }`}
-                  />
-                  {touched.city && errors.city && (
-                    <p className="text-[11px] text-red-500 flex items-center gap-1">
-                      <AlertCircle size={12} /> {errors.city}
-                    </p>
-                  )}
-                </div>
+                          <div className="flex items-center justify-end border-t border-border-custom/50 pt-3 mt-4">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditAddress(addr);
+                              }}
+                              className="text-[10px] uppercase tracking-widest font-semibold text-accent hover:text-accent/80 transition-colors cursor-pointer"
+                            >
+                              Edit details
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
 
-                {/* State */}
-                <div className="space-y-1.5">
-                  <label htmlFor="state" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
-                    State <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="state"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
-                      touched.state && errors.state
-                        ? "border-red-400 focus:ring-red-400"
-                        : "border-border-custom"
-                    }`}
-                  >
-                    <option value="">Select State</option>
-                    <option value="Andhra Pradesh">Andhra Pradesh</option>
-                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                    <option value="Assam">Assam</option>
-                    <option value="Bihar">Bihar</option>
-                    <option value="Chhattisgarh">Chhattisgarh</option>
-                    <option value="Goa">Goa</option>
-                    <option value="Gujarat">Gujarat</option>
-                    <option value="Haryana">Haryana</option>
-                    <option value="Himachal Pradesh">Himachal Pradesh</option>
-                    <option value="Jharkhand">Jharkhand</option>
-                    <option value="Karnataka">Karnataka</option>
-                    <option value="Kerala">Kerala</option>
-                    <option value="Madhya Pradesh">Madhya Pradesh</option>
-                    <option value="Maharashtra">Maharashtra</option>
-                    <option value="Manipur">Manipur</option>
-                    <option value="Meghalaya">Meghalaya</option>
-                    <option value="Mizoram">Mizoram</option>
-                    <option value="Nagaland">Nagaland</option>
-                    <option value="Odisha">Odisha</option>
-                    <option value="Punjab">Punjab</option>
-                    <option value="Rajasthan">Rajasthan</option>
-                    <option value="Sikkim">Sikkim</option>
-                    <option value="Tamil Nadu">Tamil Nadu</option>
-                    <option value="Telangana">Telangana</option>
-                    <option value="Tripura">Tripura</option>
-                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                    <option value="Uttarakhand">Uttarakhand</option>
-                    <option value="West Bengal">West Bengal</option>
-                    <option value="Delhi">Delhi</option>
-                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                    <option value="Ladakh">Ladakh</option>
-                    <option value="Puducherry">Puducherry</option>
-                  </select>
-                  {touched.state && errors.state && (
-                    <p className="text-[11px] text-red-500 flex items-center gap-1">
-                      <AlertCircle size={12} /> {errors.state}
-                    </p>
-                  )}
+            {/* Selected Address Display card */}
+            {!isFormActive && (
+              <div className="bg-white rounded-3xl border border-border-custom p-6 md:p-8 shadow-xs space-y-4">
+                <h2 className="font-serif text-xl md:text-2xl tracking-wide text-foreground border-b border-border-custom/60 pb-3">
+                  Selected Shipping Address
+                </h2>
+                <div className="font-sans text-sm text-foreground/80 space-y-1 leading-relaxed">
+                  <p className="font-semibold text-foreground text-base">{formData.fullName}</p>
+                  <p>{formData.houseFlat}, {formData.street}</p>
+                  {formData.landmark && <p className="italic text-foreground/55">Landmark: {formData.landmark}</p>}
+                  <p>{formData.city}, {formData.state} - {formData.pinCode}</p>
+                  <p className="pt-2"><span className="font-semibold text-foreground/50 text-xs uppercase tracking-wider">Phone:</span> {formData.phone}</p>
+                  <p className="pt-1"><span className="font-semibold text-foreground/50 text-xs uppercase tracking-wider">Delivery Email:</span> {formData.email}</p>
                 </div>
+              </div>
+            )}
 
-                {/* PIN Code */}
-                <div className="space-y-1.5">
-                  <label htmlFor="pinCode" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
-                    PIN Code <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="pinCode"
-                    name="pinCode"
-                    value={formData.pinCode}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    maxLength={6}
-                    placeholder="6-digit ZIP / PIN code"
-                    className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
-                      touched.pinCode && errors.pinCode
-                        ? "border-red-400 focus:ring-red-400"
-                        : "border-border-custom"
-                    }`}
-                  />
-                  {touched.pinCode && errors.pinCode && (
-                    <p className="text-[11px] text-red-500 flex items-center gap-1">
-                      <AlertCircle size={12} /> {errors.pinCode}
-                    </p>
+            {/* Shipping Address Input Form */}
+            {isFormActive && (
+              <div className="bg-white rounded-3xl border border-border-custom p-6 md:p-8 shadow-xs space-y-6">
+                <h2 className="font-serif text-xl md:text-2xl tracking-wide text-foreground border-b border-border-custom/60 pb-3">
+                  {editingAddressId ? "Edit Address Details" : "Enter Shipping Address"}
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 font-sans">
+                  {/* House/Flat */}
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label htmlFor="houseFlat" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
+                      Flat, House No., Building, Apartment <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="houseFlat"
+                      name="houseFlat"
+                      value={formData.houseFlat}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      placeholder="e.g. Apartment 4B, Sunflower Residency"
+                      className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
+                        touched.houseFlat && errors.houseFlat
+                          ? "border-red-400 focus:ring-red-400"
+                          : "border-border-custom"
+                      }`}
+                    />
+                    {touched.houseFlat && errors.houseFlat && (
+                      <p className="text-[11px] text-red-500 flex items-center gap-1">
+                        <AlertCircle size={12} /> {errors.houseFlat}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Street/Locality */}
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label htmlFor="street" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
+                      Area, Street, Sector, Village <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="street"
+                      name="street"
+                      value={formData.street}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      placeholder="e.g. 5th Main, Sector 7, HSR Layout"
+                      className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
+                        touched.street && errors.street
+                          ? "border-red-400 focus:ring-red-400"
+                          : "border-border-custom"
+                      }`}
+                    />
+                    {touched.street && errors.street && (
+                      <p className="text-[11px] text-red-500 flex items-center gap-1">
+                        <AlertCircle size={12} /> {errors.street}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Landmark */}
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label htmlFor="landmark" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
+                      Landmark <span className="text-foreground/40 text-[10px] font-normal lowercase">(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="landmark"
+                      name="landmark"
+                      value={formData.landmark}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Near HDFC Bank ATM"
+                      className="w-full px-4 py-3 rounded-xl border border-border-custom bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all"
+                    />
+                  </div>
+
+                  {/* City */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="city" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
+                      Town / City <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="city"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      placeholder="Enter city"
+                      className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
+                        touched.city && errors.city
+                          ? "border-red-400 focus:ring-red-400"
+                          : "border-border-custom"
+                      }`}
+                    />
+                    {touched.city && errors.city && (
+                      <p className="text-[11px] text-red-500 flex items-center gap-1">
+                        <AlertCircle size={12} /> {errors.city}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* State */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="state" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
+                      State <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="state"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
+                        touched.state && errors.state
+                          ? "border-red-400 focus:ring-red-400"
+                          : "border-border-custom"
+                      }`}
+                    >
+                      <option value="">Select State</option>
+                      <option value="Andhra Pradesh">Andhra Pradesh</option>
+                      <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                      <option value="Assam">Assam</option>
+                      <option value="Bihar">Bihar</option>
+                      <option value="Chhattisgarh">Chhattisgarh</option>
+                      <option value="Goa">Goa</option>
+                      <option value="Gujarat">Gujarat</option>
+                      <option value="Haryana">Haryana</option>
+                      <option value="Himachal Pradesh">Himachal Pradesh</option>
+                      <option value="Jharkhand">Jharkhand</option>
+                      <option value="Karnataka">Karnataka</option>
+                      <option value="Kerala">Kerala</option>
+                      <option value="Madhya Pradesh">Madhya Pradesh</option>
+                      <option value="Maharashtra">Maharashtra</option>
+                      <option value="Manipur">Manipur</option>
+                      <option value="Meghalaya">Meghalaya</option>
+                      <option value="Mizoram">Mizoram</option>
+                      <option value="Nagaland">Nagaland</option>
+                      <option value="Odisha">Odisha</option>
+                      <option value="Punjab">Punjab</option>
+                      <option value="Rajasthan">Rajasthan</option>
+                      <option value="Sikkim">Sikkim</option>
+                      <option value="Tamil Nadu">Tamil Nadu</option>
+                      <option value="Telangana">Telangana</option>
+                      <option value="Tripura">Tripura</option>
+                      <option value="Uttar Pradesh">Uttar Pradesh</option>
+                      <option value="Uttarakhand">Uttarakhand</option>
+                      <option value="West Bengal">West Bengal</option>
+                      <option value="Delhi">Delhi</option>
+                      <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                      <option value="Ladakh">Ladakh</option>
+                      <option value="Puducherry">Puducherry</option>
+                    </select>
+                    {touched.state && errors.state && (
+                      <p className="text-[11px] text-red-500 flex items-center gap-1">
+                        <AlertCircle size={12} /> {errors.state}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* PIN Code */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="pinCode" className="text-xs uppercase tracking-wider font-semibold text-foreground/70">
+                      PIN Code <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="pinCode"
+                      name="pinCode"
+                      value={formData.pinCode}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      maxLength={6}
+                      placeholder="6-digit ZIP / PIN code"
+                      className={`w-full px-4 py-3 rounded-xl border bg-background text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:ring-1 focus:ring-accent transition-all ${
+                        touched.pinCode && errors.pinCode
+                          ? "border-red-400 focus:ring-red-400"
+                          : "border-border-custom"
+                      }`}
+                    />
+                    {touched.pinCode && errors.pinCode && (
+                      <p className="text-[11px] text-red-500 flex items-center gap-1">
+                        <AlertCircle size={12} /> {errors.pinCode}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Save Checkbox (Only if adding a new address) */}
+                  {!editingAddressId && (
+                    <div className="md:col-span-2 pt-2 flex items-center">
+                      <label className="relative flex items-center gap-2 cursor-pointer text-sm text-foreground/75 select-none">
+                        <input
+                          type="checkbox"
+                          checked={saveForFuture}
+                          onChange={(e) => setSaveForFuture(e.target.checked)}
+                          className="w-4.5 h-4.5 accent-accent border-border-custom rounded-sm cursor-pointer"
+                        />
+                        <span>Save this address for future orders</span>
+                      </label>
+                    </div>
                   )}
                 </div>
               </div>
-            </div>
+            )}
 
           </div>
 
@@ -747,7 +1021,7 @@ export default function CheckoutPage() {
                 Items in Order
               </h3>
               
-              <div className="divide-y divide-border-custom/40 max-h-[280px] overflow-y-auto pr-1 no-scrollbar">
+              <div className="divide-y divide-border-custom/40 max-h-[280px] overflow-y-auto pr-1 no-scrollbar font-sans">
                 {cart.map((item) => {
                   const lineTotal = item.product.price * item.quantity;
                   return (
@@ -796,7 +1070,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Razorpay Placeholder Button or Order Success Block */}
-              <div className="pt-2 space-y-4">
+              <div className="pt-2 space-y-4 font-sans">
                 {createdOrder ? (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 text-center space-y-3 animate-fadeIn">
                     <div className="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-xs">
@@ -813,7 +1087,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
-                 ) : (
+                ) : (
                   <>
                     {submitError && (
                       <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-2 text-xs text-red-700 font-sans">
@@ -822,12 +1096,12 @@ export default function CheckoutPage() {
                       </div>
                     )}
                     {activeOrder ? (
-                      <div className="space-y-3 font-sans">
+                      <div className="space-y-3">
                         <button
                           type="button"
                           onClick={() => handleProceedPayment()}
                           disabled={isSubmitting}
-                          className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
+                          className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer font-sans"
                         >
                           {isSubmitting ? (
                             <span className="animate-pulse">Preparing Secure Payment...</span>
@@ -850,7 +1124,7 @@ export default function CheckoutPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer"
+                        className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer font-sans"
                       >
                         {isSubmitting ? (
                           <span className="animate-pulse">Preparing Secure Payment...</span>
@@ -871,5 +1145,20 @@ export default function CheckoutPage() {
         </form>
       </div>
     </section>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center pt-24 bg-background animate-pulse">
+          <div className="w-12 h-12 rounded-full bg-border-custom/50 mx-auto" />
+          <div className="h-4 w-32 bg-border-custom/50 rounded mx-auto mt-4" />
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 }

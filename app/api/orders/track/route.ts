@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { expirePendingOrders } from "@/lib/supabase/expire-orders";
+import { getCustomerSession } from "@/lib/auth/customer-session-server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,6 +31,14 @@ export async function POST(req: NextRequest) {
     // Clean up any abandoned pending orders
     await expirePendingOrders(supabase);
 
+    const customerSession = await getCustomerSession();
+    if (!customerSession) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized. Please log in to track orders." },
+        { status: 401 }
+      );
+    }
+
     // 2. Query Supabase: match both order_number and email case-insensitively
     // We select only tracking-relevant fields. Never expose signatures, IDs, or metadata.
     const { data: order, error } = await supabase
@@ -53,6 +62,7 @@ export async function POST(req: NextRequest) {
         order_status
       `)
       .eq("order_number", trimmedOrderNumber)
+      .eq("user_id", customerSession.user.id)
       .ilike("email", trimmedEmail)
       .maybeSingle();
 
