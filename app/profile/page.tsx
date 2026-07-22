@@ -26,31 +26,12 @@ export default function ProfilePage() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const response = await fetch("/api/customer/profile");
-        if (!response.ok) {
-          return;
-        }
-
-        const data = await response.json();
-        const loadedProfile = data.profile as ProfileResponse | null;
-        setCurrentProfile(loadedProfile);
-        if (loadedProfile?.full_name) {
-          setFullName(loadedProfile.full_name);
-        }
-      } catch (error) {
-        console.error("Failed to load profile:", error);
-      }
-    };
-
     if (profile) {
       setCurrentProfile(profile as unknown as ProfileResponse);
       if (profile.full_name) {
         setFullName(profile.full_name);
       }
     } else if (user) {
-      void loadProfile();
       if (user.user_metadata?.full_name) {
         setFullName(user.user_metadata.full_name);
       } else if (user.email) {

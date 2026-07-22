@@ -134,55 +134,40 @@ export function CustomerAuthProvider({ children }: { children: React.ReactNode }
     }
 
     setProfile(null);
-    lastSyncedAccessTokenRef.current = null;
-    await clearSessionOnServer();
+    if (lastSyncedAccessTokenRef.current !== null) {
+      lastSyncedAccessTokenRef.current = null;
+      await clearSessionOnServer();
+    }
   }, [refreshProfile]);
 
   useEffect(() => {
     let isActive = true;
 
-    const initialize = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (!isActive) return;
-
-        const initialSession = data.session ?? null;
-        setSession(initialSession);
-        sessionRef.current = initialSession;
-
-        if (initialSession) {
-          await syncSessionToServerIfNeeded(initialSession, lastSyncedAccessTokenRef);
-          await refreshProfile(initialSession);
-        }
-      } catch (error) {
-        console.error("Failed to initialize customer auth session:", error);
-      } finally {
-        if (isActive) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void initialize();
-
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, nextSession) => {
       if (!isActive) return;
 
-      if (event === "SIGNED_OUT") {
+      if (event === "SIGNED_OUT" || !nextSession) {
         setSession(null);
         sessionRef.current = null;
         setProfile(null);
-        lastSyncedAccessTokenRef.current = null;
-        await clearSessionOnServer();
+        if (lastSyncedAccessTokenRef.current !== null) {
+          lastSyncedAccessTokenRef.current = null;
+          await clearSessionOnServer();
+        }
+        setIsLoading(false);
         return;
       }
 
-      if (nextSession) {
-        setSession(nextSession);
-        sessionRef.current = nextSession;
+      const isNewSession = lastSyncedAccessTokenRef.current !== nextSession.access_token;
+
+      setSession(nextSession);
+      sessionRef.current = nextSession;
+
+      if (isNewSession) {
         await syncSessionToServerIfNeeded(nextSession, lastSyncedAccessTokenRef);
         await refreshProfile(nextSession);
       }
+      setIsLoading(false);
     });
 
     return () => {
@@ -196,8 +181,10 @@ export function CustomerAuthProvider({ children }: { children: React.ReactNode }
     setSession(null);
     sessionRef.current = null;
     setProfile(null);
-    lastSyncedAccessTokenRef.current = null;
-    await clearSessionOnServer();
+    if (lastSyncedAccessTokenRef.current !== null) {
+      lastSyncedAccessTokenRef.current = null;
+      await clearSessionOnServer();
+    }
   }, []);
 
   const value = useMemo<CustomerAuthContextValue>(

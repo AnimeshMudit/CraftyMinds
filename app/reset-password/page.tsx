@@ -1,30 +1,36 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, Lock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
 function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { session, isLoading: authLoading } = useCustomerAuth();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [hasSession, setHasSession] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const nextPath = searchParams.get("next") || "/profile";
 
-  useEffect(() => {
-    const syncSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setHasSession(Boolean(data.session));
-    };
+  const hasSession = Boolean(session);
 
-    void syncSession();
-  }, []);
+  if (authLoading) {
+    return (
+      <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-background min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-md bg-white border border-border-custom rounded-3xl p-8 shadow-xs text-center space-y-4">
+          <Loader2 size={28} className="mx-auto animate-spin text-accent" />
+          <h1 className="font-serif text-3xl text-foreground">Checking session</h1>
+          <p className="text-sm text-foreground/70">Please wait while we verify your recovery session.</p>
+        </div>
+      </section>
+    );
+  }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

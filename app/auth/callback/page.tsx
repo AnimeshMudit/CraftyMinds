@@ -4,11 +4,12 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { buildCustomerSessionPayload } from "@/context/CustomerAuthContext";
+import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
 function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { syncSession } = useCustomerAuth();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -26,11 +27,7 @@ function AuthCallbackContent() {
 
         const { data } = await supabase.auth.getSession();
         if (data.session) {
-          await fetch("/api/auth/session", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ session: buildCustomerSessionPayload(data.session) }),
-          });
+          await syncSession(data.session);
         }
 
         const nextPath = searchParams.get("next") || "/";
@@ -43,7 +40,7 @@ function AuthCallbackContent() {
     };
 
     void run();
-  }, [router, searchParams]);
+  }, [router, searchParams, syncSession]);
 
   return (
     <section className="min-h-screen pt-28 pb-16 flex items-center justify-center bg-background px-4">
