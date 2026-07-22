@@ -154,18 +154,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (customerSession?.user.email) {
-      const { error: linkError } = await supabase
-        .from("orders")
-        .update({ user_id: customerSession.user.id })
-        .eq("email", customerSession.user.email)
-        .is("user_id", null);
-
-      if (linkError) {
-        console.error("Failed to associate existing guest orders:", linkError);
-      }
-    }
-
     return NextResponse.json({
       success: true,
       orderId: insertedOrder.id,

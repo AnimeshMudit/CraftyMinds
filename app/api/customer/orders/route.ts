@@ -15,14 +15,6 @@ export async function GET() {
     // Clean up any abandoned pending orders
     await expirePendingOrders(supabase);
 
-    if (session.user.email) {
-      await supabase
-        .from("orders")
-        .update({ user_id: session.user.id })
-        .eq("email", session.user.email)
-        .is("user_id", null);
-    }
-
     const { data, error } = await supabase
       .from("orders")
       .select("id, order_number, customer_name, email, phone, total, subtotal, payment_status, order_status, created_at, items")
