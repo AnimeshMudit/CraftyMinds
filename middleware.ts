@@ -34,7 +34,9 @@ function isCustomerProtectedPath(pathname: string) {
     pathname === "/profile" ||
     pathname.startsWith("/profile/") ||
     pathname === "/my-orders" ||
-    pathname.startsWith("/my-orders/")
+    pathname.startsWith("/my-orders/") ||
+    pathname === "/order-confirmation" ||
+    pathname.startsWith("/order-confirmation/")
   );
 }
 
@@ -176,6 +178,6 @@ export async function middleware(request: NextRequest) {
 
 // Config to run middleware only on relevant paths
 export const config = {
-  matcher: ["/admin/:path*", "/profile/:path*", "/my-orders/:path*", "/checkout/:path*"],
+  matcher: ["/admin/:path*", "/profile/:path*", "/my-orders/:path*", "/checkout/:path*", "/order-confirmation/:path*"],
 };
 

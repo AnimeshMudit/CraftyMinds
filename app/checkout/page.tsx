@@ -165,10 +165,10 @@ function CheckoutContent() {
 
   // Redirect to cart if empty
   useEffect(() => {
-    if (isLoaded && cart.length === 0) {
+    if (isLoaded && cart.length === 0 && !createdOrder) {
       router.push("/cart");
     }
-  }, [isLoaded, cart, router]);
+  }, [isLoaded, cart, router, createdOrder]);
 
   const handleSelectAddress = (addr: Address) => {
     setSelectedAddressId(addr.id);
@@ -478,7 +478,7 @@ function CheckoutContent() {
               id: orderId!,
               number: orderNumber!,
             });
-            router.push(`/order-confirmation/${orderNumber}`);
+            router.push(`/order-confirmation?order=${orderNumber}`);
           } catch (err) {
             console.error("Payment verification failure:", err);
             setSubmitError(
