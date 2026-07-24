@@ -168,6 +168,12 @@ export default function CustomerOrderEmail({ order }: CustomerOrderEmailProps) {
           <p style={styles.subtitle}>
             Your payment has been received and verified. We&apos;ll begin preparing your handmade order shortly.
           </p>
+          <p style={{ ...styles.subtitle, marginTop: "-12px", color: "#A56A43", fontWeight: "bold" }}>
+            Estimated delivery: 10–12 business days
+          </p>
+          <p style={{ ...styles.subtitle, fontSize: "12px", fontStyle: "italic", marginTop: "-16px" }}>
+            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+          </p>
 
           {/* Order Details Grid */}
           <table style={styles.infoGrid}>

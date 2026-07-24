@@ -48,6 +48,7 @@ function copyCookies(from: NextResponse, to: NextResponse) {
       maxAge: cookie.maxAge,
       secure: cookie.secure,
       httpOnly: cookie.httpOnly,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       sameSite: cookie.sameSite as any,
     });
   });

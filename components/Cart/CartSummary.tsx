@@ -28,11 +28,16 @@ export default function CartSummary({ showCheckoutButton = true }: CartSummaryPr
           </span>
         </div>
         
-        <div className="flex justify-between items-center text-foreground/75">
-          <span>Shipping</span>
-          <span className="text-accent-secondary font-medium uppercase tracking-wider text-xs">
-            Free Delivery
-          </span>
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between items-center text-foreground/75">
+            <span>Shipping</span>
+            <span className="text-foreground/50 font-medium text-xs italic">
+              Calculated after confirmation
+            </span>
+          </div>
+          <p className="text-[11px] text-foreground/50 leading-normal italic font-light">
+            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+          </p>
         </div>
 
         <div className="border-t border-border-custom/60 pt-4 flex justify-between items-end">

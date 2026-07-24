@@ -47,6 +47,12 @@ export function renderCustomerOrderHtml(order: Order): string {
           <p style="font-size: 14px; color: #64748b; margin: 0 0 24px 0; line-height: 1.5;">
             Your payment has been received and verified. We&apos;ll begin preparing your handmade order shortly.
           </p>
+          <p style="font-size: 14px; color: #A56A43; margin: -12px 0 24px 0; line-height: 1.5; font-weight: bold;">
+            Estimated delivery: 10–12 business days
+          </p>
+          <p style="font-size: 12px; color: #64748b; margin: -16px 0 24px 0; line-height: 1.5; font-style: italic;">
+            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+          </p>
 
           <!-- Order Details Grid -->
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">

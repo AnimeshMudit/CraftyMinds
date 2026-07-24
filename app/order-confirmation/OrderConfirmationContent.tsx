@@ -149,9 +149,6 @@ export default function OrderConfirmationContent({ orderNumber }: OrderConfirmat
     hour12: true
   });
 
-  // Calculate dynamic shipping if total difference exists (though currently Free)
-  const shippingCharge = order.total - order.subtotal;
-
   return (
     <section className="min-h-screen bg-background pt-28 pb-16 md:pt-36 md:pb-24 font-sans text-foreground">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-8">
@@ -216,6 +213,9 @@ export default function OrderConfirmationContent({ orderNumber }: OrderConfirmat
               <p className="text-xs font-semibold uppercase tracking-wider text-foreground/50">Shipping Update</p>
               <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed font-light">
                 We&apos;re preparing your handmade products with care. You&apos;ll receive another email once your order has been shipped.
+              </p>
+              <p className="text-xs text-accent font-semibold pt-1">
+                Estimated delivery: 10–12 business days
               </p>
             </div>
           </div>
@@ -386,13 +386,14 @@ export default function OrderConfirmationContent({ orderNumber }: OrderConfirmat
                   <span>Subtotal</span>
                   <span className="font-medium text-foreground">₹{order.subtotal.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span>Shipping</span>
-                  {shippingCharge > 0 ? (
-                    <span className="font-medium text-foreground">₹{shippingCharge.toLocaleString("en-IN")}</span>
-                  ) : (
-                    <span className="text-emerald-600 font-semibold uppercase tracking-wider text-[10px]">Free</span>
-                  )}
+                <div className="flex flex-col gap-1">
+                  <div className="flex justify-between items-center">
+                    <span>Shipping</span>
+                    <span className="text-foreground/50 text-xs italic">Calculated after confirmation</span>
+                  </div>
+                  <p className="text-[11px] text-foreground/50 leading-normal text-right">
+                    Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+                  </p>
                 </div>
               </div>
               

@@ -1057,9 +1057,14 @@ function CheckoutContent() {
                   <span>Subtotal</span>
                   <span className="font-medium text-foreground">₹{cartSubtotal.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between items-center text-foreground/70">
-                  <span>Delivery Charges</span>
-                  <span className="text-accent-secondary font-semibold uppercase tracking-wider text-[11px]">Free</span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex justify-between items-center text-foreground/70">
+                    <span>Delivery Charges</span>
+                    <span className="text-foreground/50 text-xs italic">Calculated after confirmation</span>
+                  </div>
+                  <p className="text-[11px] text-foreground/50 leading-normal text-right">
+                    Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+                  </p>
                 </div>
                 <div className="border-t border-border-custom/50 pt-3 flex justify-between items-end">
                   <span className="font-serif text-base font-medium text-foreground">Grand Total</span>

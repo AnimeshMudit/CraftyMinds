@@ -29,6 +29,9 @@ export default function ShippingPolicyPage() {
           <p>
             We currently deliver exclusively to locations across India. We partner with reliable third-party logistics networks to ensure that your orders are handled carefully and delivered securely.
           </p>
+          <p>
+            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+          </p>
         </div>
 
         {/* Section 2 */}
@@ -51,14 +54,16 @@ export default function ShippingPolicyPage() {
             3. Delivery Timelines
           </h3>
           <p>
-            Once dispatched from our workshop, the estimated transit times are:
+            Our standard order fulfillment timeline, including processing, packaging, and shipping, is approximately <strong>10–12 business days</strong>.
           </p>
           <ul className="list-disc pl-5 space-y-1 mt-2">
-            <li><strong>Metropolitan Cities:</strong> **3 to 5 business days** post-dispatch.</li>
-            <li><strong>Rest of India (Tier 2/3 cities and towns):</strong> **5 to 8 business days** post-dispatch.</li>
+            <li><strong>Estimated order delivery: 10–12 business days</strong></li>
           </ul>
+          <p>
+            This estimate includes order processing, quality checks, packaging, and transit time.
+          </p>
           <p className="mt-2 text-slate-500 italic text-xs">
-            *Please note: Transit times are estimates provided by courier companies. Delays due to public holidays, adverse weather, or regional issues are beyond our direct control.
+            *Please note: Delivery timelines are estimates. Delays due to public holidays, adverse weather, or regional courier issues are beyond our direct control.
           </p>
         </div>
 

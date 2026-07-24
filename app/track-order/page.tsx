@@ -315,9 +315,14 @@ export default function TrackOrderPage() {
                   <span>Subtotal</span>
                   <span className="font-medium text-slate-800">₹{order.subtotal.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span>Delivery Charges</span>
-                  <span className="text-emerald-600 font-semibold uppercase tracking-wider text-[11px]">Free</span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex justify-between items-center">
+                    <span>Delivery Charges</span>
+                    <span className="text-slate-500 font-semibold text-xs italic">Calculated after confirmation</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 italic leading-normal text-right">
+                    Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+                  </p>
                 </div>
               </div>
               <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
