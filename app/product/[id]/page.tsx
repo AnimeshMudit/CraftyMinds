@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getProduct, getProducts } from "@/lib/supabase/products";
+import { getProductServer, getProductsServer } from "@/lib/supabase/products-server";
 import ProductCard from "@/components/ProductCard";
 import CollapsibleSection from "@/components/CollapsibleSection";
 import ProductPurchaseSection from "@/components/ProductPurchaseSection";
@@ -18,14 +18,14 @@ export const dynamic = "force-dynamic";
 
 export default async function ProductDetailsPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const product = await getProduct(id);
+  const product = await getProductServer(id);
 
   if (!product) {
     notFound();
   }
 
   // Get related products from same category, excluding current product
-  const allProducts = await getProducts();
+  const allProducts = await getProductsServer();
   const relatedProducts = allProducts
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
@@ -94,7 +94,7 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
         
         {/* Back Link */}
         <Link
-          href={`/${product.category}`}
+          href={product.category === "pouch" ? "/pouches" : product.category === "magnet" ? "/magnets" : `/${product.category}`}
           className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/50 hover:text-accent font-medium mb-6 md:mb-10 transition-colors duration-300 group"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />

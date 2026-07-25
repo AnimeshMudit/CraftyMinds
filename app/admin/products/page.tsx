@@ -1,5 +1,5 @@
 import React from "react";
-import { getProducts } from "@/lib/supabase/products";
+import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductsClient from "./ProductsClient";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function AdminProductsPage() {
-  const products = await getProducts();
+  const products = await getProductsServer();
 
   return <ProductsClient initialProducts={products} />;
 }

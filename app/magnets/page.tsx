@@ -1,5 +1,5 @@
 import React from "react";
-import { getProducts } from "@/lib/supabase/products";
+import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function MagnetsCategoryPage() {
-  const allProducts = await getProducts();
+  const allProducts = await getProductsServer();
   const magnetProducts = allProducts.filter((p) => p.category === "magnet");
 
   return (

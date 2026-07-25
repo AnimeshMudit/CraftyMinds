@@ -1,6 +1,6 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { getProduct } from "@/lib/supabase/products";
+import { getProductServer } from "@/lib/supabase/products-server";
 import EditProductFormClient from "./EditProductFormClient";
 
 interface EditProductPageProps {
@@ -18,7 +18,7 @@ export const metadata = {
 
 export default async function AdminEditProductPage({ params }: EditProductPageProps) {
   const { id } = await params;
-  const product = await getProduct(id);
+  const product = await getProductServer(id);
 
   if (!product) {
     notFound();

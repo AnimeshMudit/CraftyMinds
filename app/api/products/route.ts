@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/utils/auth";
 import { getProductsServer, createProductServer } from "@/lib/supabase/products-server";
+import { revalidatePath } from "next/cache";
+
+function getCategoryPath(category: string): string {
+  switch (category) {
+    case "pouch":
+      return "/pouches";
+    case "magnet":
+      return "/magnets";
+    default:
+      return `/${category}`;
+  }
+}
 
 export async function GET() {
   try {
@@ -37,6 +49,11 @@ export async function POST(request: Request) {
       specifications,
     });
 
+    // Invalidate caches to ensure storefront is immediately updated
+    revalidatePath("/");
+    revalidatePath(getCategoryPath(category));
+    revalidatePath("/admin/products");
+
     return NextResponse.json(newProduct, { status: 201 });
   } catch (err) {
     console.error("POST /api/products error:", err);
@@ -44,3 +61,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
+
+
