@@ -30,46 +30,6 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
 
-  // Generate category-specific features
-  const getFeatures = (category: string) => {
-    switch (category) {
-      case "mdf":
-        return [
-          "Base Material: Premium high-density MDF wood board",
-          "Paint Details: Fine artist-grade professional acrylic paint",
-          "Protective Coat: Sealing gloss varnish (water-resistant, anti-fade)",
-          "Hanging Hardware: Heavy-duty pre-installed wall mount hook included",
-        ];
-      case "pouch":
-        return [
-          "Exterior fabric: Quilted natural cotton or premium linen",
-          "Inner structure: Fully lined with lightweight splash-resistant padding",
-          "Hardware details: Smooth brass zipper with rustic leather pull tab",
-          "Maintenance: Hand-wash in cold water, air dry flat",
-        ];
-      case "magnet":
-        return [
-          "Base Material: Natural pine wood slice or sculpted polymer clay",
-          "Magnetic backing: Ultra-strong neodymium magnet (holds up to 4 papers)",
-          "Protective finish: Glossy or matte clear glaze coat",
-          "Scratch Protection: Velvet felt layer to prevent fridge scratches",
-        ];
-      case "rakhis":
-        return [
-          "Base Material: Premium threads and handcrafted embellishments",
-          "Artistry: Intricate hand-woven or hand-painted details",
-          "Comfort: Skin-friendly soft cotton thread/dori",
-          "Packaging: Comes with a beautiful card and eco-friendly pouch",
-        ];
-      default:
-        return [
-          "100% handcrafted in small batches",
-          "Premium materials sourced locally",
-          "Quality checked and carefully wrapped for gifting",
-        ];
-    }
-  };
-
   const getCareInstructions = (category: string) => {
     switch (category) {
       case "mdf":
@@ -85,7 +45,6 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
     }
   };
 
-  const features = getFeatures(product.category);
   const careInstructions = getCareInstructions(product.category);
 
   return (
@@ -168,18 +127,20 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
             </div>
 
             {/* Specifications (Collapsible on Mobile) */}
-            <div className="order-5 lg:order-4 pt-2 lg:pt-0">
-              <CollapsibleSection title="Specifications">
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-foreground/70 font-light font-sans">
-                  {features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CollapsibleSection>
-            </div>
+            {product.specifications && product.specifications.length > 0 && (
+              <div className="order-5 lg:order-4 pt-2 lg:pt-0">
+                <CollapsibleSection title="Specifications">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm text-foreground/70 font-light font-sans">
+                    {product.specifications.map((spec, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                        <span>{spec.label} — {spec.value}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CollapsibleSection>
+              </div>
+            )}
 
             {/* Care Instructions (Collapsible on Mobile) */}
             <div className="order-6 lg:order-5 pt-2 lg:pt-0">

@@ -13,6 +13,7 @@ import {
   ClipboardList
 } from "lucide-react";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
+import { SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
 
 export default function TrackOrderPage() {
   const { user, isLoading } = useCustomerAuth();
@@ -21,6 +22,8 @@ export default function TrackOrderPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [order, setOrder] = useState<Order | null>(null);
+  
+  const shippingPaid = order ? order.total - order.subtotal : 0;
 
   // Form submission handler
   const handleTrackSubmit = async (e: React.FormEvent) => {
@@ -318,10 +321,15 @@ export default function TrackOrderPage() {
                 <div className="flex flex-col gap-1">
                   <div className="flex justify-between items-center">
                     <span>Delivery Charges</span>
-                    <span className="text-slate-500 font-semibold text-xs italic">Calculated after confirmation</span>
+                    <span className="text-slate-900 font-medium text-sm">
+                      {shippingPaid === 0 ? "Free" : `₹${shippingPaid}`}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 italic leading-normal text-right">
-                    Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+                  <p className="text-[11px] text-slate-500 italic leading-normal text-right font-light">
+                    {shippingPaid === 0 
+                      ? `Free shipping on orders of ₹${SHIPPING_FREE_THRESHOLD} or more.`
+                      : `A flat ₹${SHIPPING_FLAT_CHARGE} shipping charge applies to orders below ₹${SHIPPING_FREE_THRESHOLD}.`
+                    }
                   </p>
                 </div>
               </div>

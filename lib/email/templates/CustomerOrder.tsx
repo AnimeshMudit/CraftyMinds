@@ -1,11 +1,13 @@
 import React from "react";
 import { Order } from "@/types/order";
+import { SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
 
 interface CustomerOrderEmailProps {
   order: Order;
 }
 
 export default function CustomerOrderEmail({ order }: CustomerOrderEmailProps) {
+  const shippingPaid = order.total - order.subtotal;
   const formattedDate = new Date(order.created_at).toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "long",
@@ -171,8 +173,8 @@ export default function CustomerOrderEmail({ order }: CustomerOrderEmailProps) {
           <p style={{ ...styles.subtitle, marginTop: "-12px", color: "#A56A43", fontWeight: "bold" }}>
             Estimated delivery: 10–12 business days
           </p>
-          <p style={{ ...styles.subtitle, fontSize: "12px", fontStyle: "italic", marginTop: "-16px" }}>
-            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+          <p style={{ ...styles.subtitle, fontSize: "12px", marginTop: "-16px" }}>
+            <strong>Shipping Policy:</strong> Free shipping on all orders of ₹{SHIPPING_FREE_THRESHOLD} or more. A flat ₹{SHIPPING_FLAT_CHARGE} shipping charge applies to orders below ₹{SHIPPING_FREE_THRESHOLD}.
           </p>
 
           {/* Order Details Grid */}
@@ -237,10 +239,22 @@ export default function CustomerOrderEmail({ order }: CustomerOrderEmailProps) {
                   </tr>
                 );
               })}
+              {/* Subtotal row */}
+              <tr>
+                <td colSpan={2} style={{ ...styles.totalTdLabel, fontSize: "12px", padding: "8px", borderTop: "1px solid #f1f5f9", fontWeight: "normal" }}>Subtotal</td>
+                <td style={{ ...styles.totalTdVal, fontSize: "12px", padding: "8px", borderTop: "1px solid #f1f5f9", fontWeight: "normal", color: "#334155" }}>₹{order.subtotal.toLocaleString("en-IN")}</td>
+              </tr>
+              {/* Shipping row */}
+              <tr>
+                <td colSpan={2} style={{ ...styles.totalTdLabel, fontSize: "12px", padding: "8px", fontWeight: "normal" }}>Shipping</td>
+                <td style={{ ...styles.totalTdVal, fontSize: "12px", padding: "8px", fontWeight: "normal", color: "#334155" }}>
+                  {shippingPaid > 0 ? `₹${shippingPaid.toLocaleString("en-IN")}` : "Free"}
+                </td>
+              </tr>
               {/* Grand Total row */}
               <tr style={styles.totalRow}>
-                <td colSpan={2} style={styles.totalTdLabel}>Grand Total</td>
-                <td style={styles.totalTdVal}>₹{order.total.toLocaleString("en-IN")}</td>
+                <td colSpan={2} style={{ ...styles.totalTdLabel, borderTop: "1px solid #f1f5f9" }}>Grand Total</td>
+                <td style={{ ...styles.totalTdVal, borderTop: "1px solid #f1f5f9" }}>₹{order.total.toLocaleString("en-IN")}</td>
               </tr>
             </tbody>
           </table>

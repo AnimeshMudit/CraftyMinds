@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
+import { calculateShipping, SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
 
 interface CartSummaryProps {
   showCheckoutButton?: boolean;
@@ -11,7 +12,7 @@ interface CartSummaryProps {
 export default function CartSummary({ showCheckoutButton = true }: CartSummaryProps) {
   const { cartSubtotal } = useCart();
   
-  const shipping = 0; // Free delivery
+  const shipping = calculateShipping(cartSubtotal);
   const total = cartSubtotal + shipping;
 
   return (
@@ -31,12 +32,15 @@ export default function CartSummary({ showCheckoutButton = true }: CartSummaryPr
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center text-foreground/75">
             <span>Shipping</span>
-            <span className="text-foreground/50 font-medium text-xs italic">
-              Calculated after confirmation
+            <span className="text-foreground font-medium text-sm">
+              {shipping === 0 ? "Free" : `₹${shipping}`}
             </span>
           </div>
           <p className="text-[11px] text-foreground/50 leading-normal italic font-light">
-            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+            {shipping === 0 
+              ? `Free shipping on all orders of ₹${SHIPPING_FREE_THRESHOLD} or more.`
+              : `A flat ₹${SHIPPING_FLAT_CHARGE} shipping charge applies to orders below ₹${SHIPPING_FREE_THRESHOLD}.`
+            }
           </p>
         </div>
 

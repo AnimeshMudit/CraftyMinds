@@ -1,9 +1,11 @@
 import { Order } from "@/types/order";
+import { SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
 
 /**
  * Renders the HTML confirmation email for the customer order.
  */
 export function renderCustomerOrderHtml(order: Order): string {
+  const shippingPaid = order.total - order.subtotal;
   const formattedDate = new Date(order.created_at).toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "long",
@@ -50,8 +52,8 @@ export function renderCustomerOrderHtml(order: Order): string {
           <p style="font-size: 14px; color: #A56A43; margin: -12px 0 24px 0; line-height: 1.5; font-weight: bold;">
             Estimated delivery: 10–12 business days
           </p>
-          <p style="font-size: 12px; color: #64748b; margin: -16px 0 24px 0; line-height: 1.5; font-style: italic;">
-            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+          <p style="font-size: 12px; color: #64748b; margin: -16px 0 24px 0; line-height: 1.5;">
+            <strong>Shipping Policy:</strong> Free shipping on all orders of ₹${SHIPPING_FREE_THRESHOLD} or more. A flat ₹${SHIPPING_FLAT_CHARGE} shipping charge applies to orders below ₹${SHIPPING_FREE_THRESHOLD}.
           </p>
 
           <!-- Order Details Grid -->
@@ -102,10 +104,22 @@ export function renderCustomerOrderHtml(order: Order): string {
             </thead>
             <tbody>
               ${itemsHtml}
+              <!-- Subtotal row -->
+              <tr>
+                <td colspan="2" style="padding: 8px 8px; font-size: 12px; color: #64748b; text-align: right; border-top: 1px solid #f1f5f9;">Subtotal</td>
+                <td style="padding: 8px 8px; font-size: 12px; color: #334155; text-align: right; border-top: 1px solid #f1f5f9;">₹${order.subtotal.toLocaleString("en-IN")}</td>
+              </tr>
+              <!-- Shipping row -->
+              <tr>
+                <td colspan="2" style="padding: 8px 8px; font-size: 12px; color: #64748b; text-align: right;">Shipping</td>
+                <td style="padding: 8px 8px; font-size: 12px; color: #334155; text-align: right;">
+                  ${shippingPaid > 0 ? `₹${shippingPaid.toLocaleString("en-IN")}` : "Free"}
+                </td>
+              </tr>
               <!-- Grand Total row -->
               <tr style="background-color: #fafafa;">
-                <td colspan="2" style="padding: 16px 8px; font-size: 14px; font-weight: bold; color: #1e293b; text-align: right;">Grand Total</td>
-                <td style="padding: 16px 8px; font-size: 16px; font-weight: bold; color: #A56A43; text-align: right;">₹${order.total.toLocaleString("en-IN")}</td>
+                <td colspan="2" style="padding: 16px 8px; font-size: 14px; font-weight: bold; color: #1e293b; text-align: right; border-top: 1px solid #f1f5f9;">Grand Total</td>
+                <td style="padding: 16px 8px; font-size: 16px; font-weight: bold; color: #A56A43; text-align: right; border-top: 1px solid #f1f5f9;">₹${order.total.toLocaleString("en-IN")}</td>
               </tr>
             </tbody>
           </table>
@@ -226,10 +240,22 @@ export function renderAdminOrderHtml(order: Order): string {
             </thead>
             <tbody>
               ${itemsHtml}
+              <!-- Subtotal row -->
+              <tr>
+                <td colspan="2" style="padding: 8px 8px; font-size: 12px; color: #64748b; text-align: right; border-top: 1px solid #f1f5f9;">Subtotal</td>
+                <td style="padding: 8px 8px; font-size: 12px; color: #334155; text-align: right; border-top: 1px solid #f1f5f9;">₹${order.subtotal.toLocaleString("en-IN")}</td>
+              </tr>
+              <!-- Shipping row -->
+              <tr>
+                <td colspan="2" style="padding: 8px 8px; font-size: 12px; color: #64748b; text-align: right;">Shipping</td>
+                <td style="padding: 8px 8px; font-size: 12px; color: #334155; text-align: right;">
+                  ${(order.total - order.subtotal) > 0 ? `₹${(order.total - order.subtotal).toLocaleString("en-IN")}` : "Free"}
+                </td>
+              </tr>
               <!-- Grand Total row -->
               <tr style="background-color: #f8fafc;">
-                <td colspan="2" style="padding: 16px 8px; font-size: 14px; font-weight: bold; color: #0f172a; text-align: right;">Grand Total</td>
-                <td style="padding: 16px 8px; font-size: 14px; font-weight: bold; color: #0f172a; text-align: right;">₹${order.total.toLocaleString("en-IN")}</td>
+                <td colspan="2" style="padding: 16px 8px; font-size: 14px; font-weight: bold; color: #0f172a; text-align: right; border-top: 1px solid #f1f5f9;">Grand Total</td>
+                <td style="padding: 16px 8px; font-size: 14px; font-weight: bold; color: #0f172a; text-align: right; border-top: 1px solid #f1f5f9;">₹${order.total.toLocaleString("en-IN")}</td>
               </tr>
             </tbody>
           </table>

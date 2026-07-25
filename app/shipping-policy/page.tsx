@@ -1,5 +1,6 @@
 import React from "react";
 import PolicyLayout from "@/components/Policy/PolicyLayout";
+import { SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
 
 export const metadata = {
   title: "Shipping Policy | Crafty Minds Studio",
@@ -30,7 +31,7 @@ export default function ShippingPolicyPage() {
             We currently deliver exclusively to locations across India. We partner with reliable third-party logistics networks to ensure that your orders are handled carefully and delivered securely.
           </p>
           <p>
-            Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+            Free shipping on all orders of <strong>₹{SHIPPING_FREE_THRESHOLD} or more</strong>. A flat <strong>₹{SHIPPING_FLAT_CHARGE} shipping charge</strong> applies to orders below <strong>₹{SHIPPING_FREE_THRESHOLD}</strong>.
           </p>
         </div>
 

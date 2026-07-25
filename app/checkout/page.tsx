@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, CreditCard, AlertCircle, Check, Plus } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
+import { calculateShipping, SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
 
 interface CheckoutFormData {
   fullName: string;
@@ -79,6 +80,8 @@ const loadRazorpayScript = () => {
 function CheckoutContent() {
   const router = useRouter();
   const { cart, isLoaded, cartSubtotal, clearCart } = useCart();
+  const shipping = calculateShipping(cartSubtotal);
+  const total = cartSubtotal + shipping;
   const { user, profile } = useCustomerAuth();
 
   // Saved addresses state
@@ -368,7 +371,7 @@ function CheckoutContent() {
             },
             items: cart,
             subtotal: cartSubtotal,
-            total: cartSubtotal, // Shipping is free, total matches subtotal
+            total: total,
           }),
         });
 
@@ -423,7 +426,7 @@ function CheckoutContent() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: cartSubtotal,
+          amount: total,
           orderId: orderNumber, // Send friendly internal order number
         }),
       });
@@ -572,8 +575,7 @@ function CheckoutContent() {
     }
   };
 
-  const shipping = 0;
-  const total = cartSubtotal + shipping;
+
 
   if (!isLoaded || cart.length === 0) {
     return (
@@ -1060,10 +1062,15 @@ function CheckoutContent() {
                 <div className="flex flex-col gap-1">
                   <div className="flex justify-between items-center text-foreground/70">
                     <span>Delivery Charges</span>
-                    <span className="text-foreground/50 text-xs italic">Calculated after confirmation</span>
+                    <span className="text-foreground font-medium text-sm">
+                      {shipping === 0 ? "Free" : `₹${shipping}`}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-foreground/50 leading-normal text-right">
-                    Shipping charges depend on your delivery location and will be shared with you via email or your registered phone number after order confirmation.
+                  <p className="text-[11px] text-foreground/50 leading-normal text-right italic font-light">
+                    {shipping === 0 
+                      ? `Free shipping on all orders of ₹${SHIPPING_FREE_THRESHOLD} or more.`
+                      : `A flat ₹${SHIPPING_FLAT_CHARGE} shipping charge applies to orders below ₹${SHIPPING_FREE_THRESHOLD}.`
+                    }
                   </p>
                 </div>
                 <div className="border-t border-border-custom/50 pt-3 flex justify-between items-end">

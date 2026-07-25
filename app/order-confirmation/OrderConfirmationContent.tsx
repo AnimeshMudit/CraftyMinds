@@ -13,6 +13,7 @@ import {
   MapPin
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
 
 interface OrderConfirmationContentProps {
   orderNumber: string | undefined;
@@ -22,6 +23,8 @@ export default function OrderConfirmationContent({ orderNumber }: OrderConfirmat
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const shippingPaid = order ? order.total - order.subtotal : 0;
 
   useEffect(() => {
     if (!orderNumber) {
@@ -343,10 +346,15 @@ export default function OrderConfirmationContent({ orderNumber }: OrderConfirmat
                 <div className="flex flex-col gap-1">
                   <div className="flex justify-between items-center">
                     <span>Shipping Charges</span>
-                    <span className="text-foreground/50 text-xs italic">Calculated after confirmation</span>
+                    <span className="text-foreground font-medium text-sm">
+                      {shippingPaid === 0 ? "Free" : `₹${shippingPaid}`}
+                    </span>
                   </div>
                   <p className="text-[10px] text-foreground/40 leading-normal italic font-light">
-                    Will be communicated via email/mobile.
+                    {shippingPaid === 0
+                      ? `Free shipping on orders of ₹${SHIPPING_FREE_THRESHOLD} or more.`
+                      : `A flat ₹${SHIPPING_FLAT_CHARGE} shipping charge applies to orders below ₹${SHIPPING_FREE_THRESHOLD}.`
+                    }
                   </p>
                 </div>
                 
@@ -390,7 +398,7 @@ export default function OrderConfirmationContent({ orderNumber }: OrderConfirmat
                   This timeline includes processing, quality checks, packaging and shipping.
                 </p>
                 <p className="text-xs text-foreground/65 italic font-light pt-2 border-t border-border-custom/20">
-                  Shipping charges (if pending) will be communicated via your registered email address or mobile number after order confirmation.
+                  Free shipping on orders of ₹{SHIPPING_FREE_THRESHOLD} or more. A flat ₹{SHIPPING_FLAT_CHARGE} shipping charge applies to orders below ₹{SHIPPING_FREE_THRESHOLD}.
                 </p>
               </div>
             </motion.div>
