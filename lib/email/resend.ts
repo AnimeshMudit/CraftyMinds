@@ -10,7 +10,8 @@ import { Order } from "@/types/order";
 export async function sendOrderEmails(order: Order): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
-  const fromEmail = process.env.FROM_EMAIL;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || process.env.FROM_EMAIL;
+  const replyTo = process.env.RESEND_REPLY_TO || "hello@craftymindstudio.in";
 
   // 1. Safe guard check on variables
   if (!apiKey) {
@@ -19,7 +20,7 @@ export async function sendOrderEmails(order: Order): Promise<void> {
   }
 
   if (!fromEmail) {
-    console.warn("Skipping email notifications: FROM_EMAIL environment variable is missing.");
+    console.warn("Skipping email notifications: RESEND_FROM_EMAIL environment variable is missing.");
     return;
   }
 
@@ -35,6 +36,7 @@ export async function sendOrderEmails(order: Order): Promise<void> {
       to: order.email,
       subject: "Your Crafty Minds Order is Confirmed 🎉",
       html: customerHtml,
+      replyTo: replyTo,
     });
 
     if (customerResponse.error) {
@@ -51,6 +53,7 @@ export async function sendOrderEmails(order: Order): Promise<void> {
         to: adminEmail,
         subject: `New Order Received - ${order.order_number}`,
         html: adminHtml,
+        replyTo: replyTo,
       });
 
       if (adminResponse.error) {

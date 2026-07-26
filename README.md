@@ -32,7 +32,8 @@ RAZORPAY_KEY_SECRET=                 # Razorpay key secret (keep secret, server-
 
 # Email Notifications
 RESEND_API_KEY=                      # Resend service API key
-FROM_EMAIL=                          # Source email for transactional updates (e.g., craftymindstudio@gmail.com)
+RESEND_FROM_EMAIL=                   # Source email for transactional updates (e.g., Crafty Mind Studio <orders@craftymindstudio.in>)
+RESEND_REPLY_TO=                     # Reply-to email for customer replies (e.g., hello@craftymindstudio.in)
 ```
 
 ---
