@@ -11,6 +11,7 @@ import { ProductDetailsSkeleton } from "@/components/Skeletons";
 
 import type { Metadata } from "next";
 import { siteConfig, getCanonicalUrl } from "@/lib/seo";
+import { generateProductSchema } from "@/lib/schema";
 
 interface ProductPageProps {
   params: Promise<{
@@ -101,9 +102,15 @@ async function ProductDetailsContent({ params }: ProductPageProps) {
   };
 
   const careInstructions = getCareInstructions(product.category);
+  const productSchema = generateProductSchema(product);
 
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-24 bg-background">
+      {/* Product JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         
         {/* Back Link */}

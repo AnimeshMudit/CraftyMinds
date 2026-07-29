@@ -51,13 +51,28 @@ export const metadata: Metadata = {
   },
 };
 
+import { generateOrganizationSchema, generateWebsiteSchema } from "@/lib/schema";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgSchema = generateOrganizationSchema();
+  const websiteSchema = generateWebsiteSchema();
+
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
       <body
         className="antialiased bg-background text-foreground min-h-screen flex flex-col font-sans"
         suppressHydrationWarning
