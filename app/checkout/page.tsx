@@ -1117,7 +1117,10 @@ function CheckoutContent() {
                           className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer font-sans"
                         >
                           {isSubmitting ? (
-                            <span className="animate-pulse">Preparing Secure Payment...</span>
+                            <>
+                              <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                              <span>Preparing Secure Payment...</span>
+                            </>
                           ) : (
                             <>
                               <CreditCard size={16} />
@@ -1140,7 +1143,10 @@ function CheckoutContent() {
                         className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-accent hover:bg-accent/90 text-white font-medium uppercase tracking-widest text-xs transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md disabled:hover:translate-y-0 cursor-pointer font-sans"
                       >
                         {isSubmitting ? (
-                          <span className="animate-pulse">Preparing Secure Payment...</span>
+                          <>
+                            <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                            <span>Preparing Secure Payment...</span>
+                          </>
                         ) : (
                           <>
                             <CreditCard size={16} />

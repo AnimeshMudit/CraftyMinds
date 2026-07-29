@@ -38,42 +38,32 @@ export default function AboutSection() {
           <span className="text-xs uppercase tracking-widest font-semibold text-accent">My Story</span>
           
           <h2 className="font-serif text-4xl sm:text-5xl tracking-tight text-foreground leading-[1.15]">
-            Hello and <br />
+            Hello & <br />
             <span className="font-light italic text-accent-secondary">Welcome!</span>
           </h2>
           
           <div className="space-y-5 text-foreground/75 font-sans font-light leading-relaxed text-sm sm:text-base">
             <p>
-              I&apos;m a homemaker, a mother, and now, finally, an artist following a dream that has been waiting patiently for many years.
+              I&apos;m a homemaker, a mother, and now an artist finally pursuing a dream that patiently waited for many years.
             </p>
             <p>
-              Like countless women, I once had dreams, career aspirations, and passions of my own. But when my only son came into my life, I chose to dedicate myself completely to raising him. Every decision I made revolved around his happiness, his education, and giving him the best life I could. My passion for art and creativity quietly took a back seat, but it never left my heart.
+              Like many women, I chose to put my dreams on hold to devote myself to my family. Every moment was dedicated to their happiness. My world revolved around my son&apos;s education and future, while my love for art quietly remained in my heart.
             </p>
             <p>
-              Today, my son has grown up and is pursuing his college education. Watching him become independent gave me the courage to rediscover a part of myself that I had set aside for years.
+              Today, as he begins his own journey, I&apos;ve found the courage to begin mine.
             </p>
             <p>
-              This website is the beginning of that new chapter.
+              Every piece you see here is handcrafted with love, patience, and passion. To me, art is more than decoration; it&apos;s a celebration of creativity, hope, and new beginnings.
             </p>
             <p>
-              Every handmade creation you see here is made with love, patience, and countless hours of dedication. For me, art isn&apos;t just about creating beautiful things—it&apos;s about expressing emotions, reliving cherished memories, and proving that it&apos;s never too late to follow your dreams.
+              This is more than a small business; it&apos;s a dream brought back to life. By supporting my work, you&apos;re encouraging the belief that it&apos;s never too late to follow your passion.
             </p>
             <p>
-              This isn&apos;t just a business. It&apos;s a dream reborn after years of waiting.
+              Thank you for being part of this journey. I hope my creations bring warmth, beauty, and joy to your home.
             </p>
-            <p>
-              By supporting my work, you&apos;re not just buying a handmade product—you are encouraging someone who finally found the courage to believe in herself again. Every order reminds me that dreams have no expiry date and that every new beginning is worth celebrating.
-            </p>
-            <p>
-              Thank you for being here and for becoming a part of my journey. I hope my creations bring as much joy to your home as they bring to my heart while making them.
-            </p>
-            <div className="pt-2 space-y-1">
-              <p className="font-medium text-foreground/90">With love and gratitude,</p>
-              <p className="text-accent font-medium">❤️ Handmade with Love</p>
+            <div className="pt-2">
+              <p className="font-medium text-foreground/90">With love & gratitude, ❤️</p>
             </div>
-            <p className="font-serif italic text-accent text-base sm:text-lg pt-2">
-              {"\"It's never too late to begin again, and every dream deserves a second chance.\""}
-            </p>
           </div>
 
           <div className="pt-4 grid grid-cols-2 gap-8 border-t border-border-custom/60">

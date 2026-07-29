@@ -19,7 +19,7 @@ export default function CategoryCard({
   href,
 }: CategoryCardProps) {
   return (
-    <Link href={href} className="group block space-y-2 md:space-y-4">
+    <Link href={href} className="group block space-y-2 md:space-y-4 active:scale-[0.985] active:opacity-95 transition-all duration-300">
       {/* Category Image - Large Image */}
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border-custom bg-background shadow-xs transition-shadow duration-500 group-hover:shadow-md">
         <Image

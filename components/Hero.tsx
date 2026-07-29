@@ -82,7 +82,7 @@ export default function Hero() {
           >
             <Link
               href="#categories"
-              className="group px-6 py-3.5 md:px-8 md:py-4 bg-accent hover:bg-accent/90 text-white rounded-full font-medium tracking-wide text-xs sm:text-sm flex items-center gap-2.5 md:gap-3 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              className="group px-6 py-3.5 md:px-8 md:py-4 bg-accent hover:bg-accent/90 text-white rounded-full font-medium tracking-wide text-xs sm:text-sm flex items-center gap-2.5 md:gap-3 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
             >
               <span>Browse Collections</span>
               <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-300" />
@@ -90,7 +90,7 @@ export default function Hero() {
 
             <a
               href="#contact"
-              className="px-6 py-3.5 md:px-8 md:py-4 border border-border-custom bg-white/50 backdrop-blur-xs hover:bg-white text-foreground rounded-full font-medium tracking-wide text-xs sm:text-sm flex items-center gap-2 transition-all duration-300 hover:border-foreground/30 hover:-translate-y-0.5"
+              className="px-6 py-3.5 md:px-8 md:py-4 border border-border-custom bg-white/50 backdrop-blur-xs hover:bg-white text-foreground rounded-full font-medium tracking-wide text-xs sm:text-sm flex items-center gap-2 transition-all duration-300 hover:border-foreground/30 hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
             >
               <MessageCircle size={15} className="text-accent" />
               <span>Contact Us</span>

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
+import { ProductCardSkeleton } from "@/components/Skeletons";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,7 @@ export const metadata = {
   description: "Browse our collection of hand-stitched quilted cotton pouches, linen makeup bags, and tech organizers.",
 };
 
-export default async function PouchesCategoryPage() {
-  const allProducts = await getProductsServer();
-  const pouchProducts = allProducts.filter((p) => p.category === "pouch");
-
+export default function PouchesCategoryPage() {
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-24 min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
@@ -28,10 +26,24 @@ export default async function PouchesCategoryPage() {
           </p>
         </div>
 
-        {/* Product Grid */}
-        <ProductGrid products={pouchProducts} />
+        {/* Product Grid inside Suspense */}
+        <Suspense fallback={
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-10">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <ProductCardSkeleton key={idx} />
+            ))}
+          </div>
+        }>
+          <PouchesProductsContent />
+        </Suspense>
 
       </div>
     </section>
   );
+}
+
+async function PouchesProductsContent() {
+  const allProducts = await getProductsServer();
+  const pouchProducts = allProducts.filter((p) => p.category === "pouch");
+  return <ProductGrid products={pouchProducts} />;
 }

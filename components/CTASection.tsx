@@ -97,7 +97,7 @@ export default function CTASection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.15 }}
-                className={`group block p-5 md:p-8 bg-white border border-border-custom rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 ${method.colorClass}`}
+                className={`group block p-5 md:p-8 bg-white border border-border-custom rounded-2xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-[0.985] active:translate-y-0 active:opacity-95 ${method.colorClass}`}
               >
                 <div className="flex flex-col h-full justify-between">
                   <div className="space-y-3 md:space-y-4">

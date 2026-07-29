@@ -1,12 +1,13 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getProductServer, getProductsServer } from "@/lib/supabase/products-server";
 import ProductCard from "@/components/ProductCard";
 import CollapsibleSection from "@/components/CollapsibleSection";
 import ProductPurchaseSection from "@/components/ProductPurchaseSection";
+import ProductImage from "@/components/ProductImage";
 import { Shield, Sparkles, RefreshCw, ChevronLeft } from "lucide-react";
+import { ProductDetailsSkeleton } from "@/components/Skeletons";
 
 interface ProductPageProps {
   params: Promise<{
@@ -16,7 +17,15 @@ interface ProductPageProps {
 
 export const dynamic = "force-dynamic";
 
-export default async function ProductDetailsPage({ params }: ProductPageProps) {
+export default function ProductDetailsPage({ params }: ProductPageProps) {
+  return (
+    <Suspense fallback={<ProductDetailsSkeleton />}>
+      <ProductDetailsContent params={params} />
+    </Suspense>
+  );
+}
+
+async function ProductDetailsContent({ params }: ProductPageProps) {
   const { id } = await params;
   const product = await getProductServer(id);
 
@@ -65,16 +74,7 @@ export default async function ProductDetailsPage({ params }: ProductPageProps) {
           
           {/* Left: Product Images Frame */}
           <div className="lg:col-span-6 relative lg:sticky lg:top-28 self-start w-full">
-            <div className="relative aspect-[4/5] w-full max-h-[380px] sm:max-h-none rounded-3xl overflow-hidden border border-border-custom shadow-xs bg-white group">
-              <Image
-                src={product.image_url}
-                alt={product.title}
-                fill
-                priority
-                className="object-cover transition-transform duration-700 group-hover:scale-101"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </div>
+            <ProductImage src={product.image_url} alt={product.title} />
           </div>
 
           {/* Right: Product Meta Data */}

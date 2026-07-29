@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, UserRound, LogOut, CircleUserRound } from "lucide-react";
+import { Menu, X, ChevronDown, UserRound, LogOut, CircleUserRound, Loader2 } from "lucide-react";
 import CartButton from "@/components/Cart/CartButton";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
@@ -23,6 +23,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { user, profile, isLoading, signOut } = useCustomerAuth();
@@ -56,10 +57,18 @@ export default function Navbar() {
     .join("") || "C";
 
   const handleLogout = async () => {
-    await signOut();
-    setProfileOpen(false);
-    router.replace("/");
-    router.refresh();
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await signOut();
+      setProfileOpen(false);
+      router.replace("/");
+      router.refresh();
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const profileMenuItems = [
@@ -80,7 +89,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="group flex flex-col">
+        <Link href="/" className="group flex flex-col active:scale-98 active:opacity-90 transition-all duration-300">
           <span className="font-serif text-xl sm:text-2xl md:text-3xl tracking-wide text-foreground group-hover:text-accent transition-colors duration-300">
             Crafty Mind <span className="font-light italic text-accent">Studio</span>
           </span>
@@ -97,7 +106,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors duration-300"
+                className="relative py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-foreground transition-all duration-300 active:scale-95 active:opacity-85"
               >
                 {link.label}
                 {isActive && (
@@ -180,10 +189,20 @@ export default function Navbar() {
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="flex items-center gap-3 w-full rounded-2xl px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+                        disabled={isLoggingOut}
+                        className="flex items-center gap-3 w-full rounded-2xl px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-75 disabled:cursor-not-allowed"
                       >
-                        <LogOut size={16} />
-                        <span>Logout</span>
+                        {isLoggingOut ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin text-rose-600" />
+                            <span>Logging out...</span>
+                          </>
+                        ) : (
+                          <>
+                            <LogOut size={16} />
+                            <span>Logout</span>
+                          </>
+                        )}
                       </button>
                     </div>
                   </motion.div>
@@ -259,7 +278,7 @@ export default function Navbar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className={`text-lg font-serif tracking-wide py-2 ${
+                    className={`text-lg font-serif tracking-wide py-2 active:scale-[0.98] active:opacity-85 transition-all duration-150 ${
                       isActive ? "text-accent font-semibold" : "text-foreground/75"
                     }`}
                   >
@@ -300,12 +319,21 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={async () => {
+                      if (isLoggingOut) return;
                       setIsOpen(false);
                       await handleLogout();
                     }}
-                    className="w-full text-center py-3.5 rounded-xl text-sm uppercase tracking-wider border border-rose-200 text-rose-600 font-medium hover:bg-rose-50 transition-all duration-300"
+                    disabled={isLoggingOut}
+                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm uppercase tracking-wider border border-rose-200 text-rose-600 font-medium hover:bg-rose-50 transition-all duration-300 disabled:opacity-75 disabled:cursor-not-allowed"
                   >
-                    Logout
+                    {isLoggingOut ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin text-rose-600" />
+                        <span>Logging out...</span>
+                      </>
+                    ) : (
+                      <span>Logout</span>
+                    )}
                   </button>
                 </>
               ) : (

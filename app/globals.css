@@ -63,3 +63,59 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Premium Skeleton & Loading Styles */
+.skeleton-shimmer {
+  background-color: #EFEBE4; /* Warm neutral background */
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(250, 247, 242, 0) 0%,
+    rgba(250, 247, 242, 0.25) 20%,
+    rgba(250, 247, 242, 0.6) 60%,
+    rgba(250, 247, 242, 0) 100%
+  );
+  animation: shimmer-animation 2.2s infinite ease-out;
+}
+
+@keyframes shimmer-animation {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Page Transition Fades */
+.page-fade-in {
+  animation: fade-in-animation 200ms ease-out forwards;
+}
+
+@keyframes fade-in-animation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after,
+  .page-fade-in,
+  .animate-pulse,
+  .transition-all,
+  .transition-colors,
+  .transition-transform {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

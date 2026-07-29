@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
+import { ProductCardSkeleton } from "@/components/Skeletons";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,7 @@ export const metadata = {
   description: "Explore handcrafted rakhis made with love and traditional artistry by Crafty Mind Studio.",
 };
 
-export default async function RakhisCategoryPage() {
-  const allProducts = await getProductsServer();
-  const rakhiProducts = allProducts.filter((p) => p.category === "rakhis");
-
+export default function RakhisCategoryPage() {
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-24 min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
@@ -28,10 +26,24 @@ export default async function RakhisCategoryPage() {
           </p>
         </div>
 
-        {/* Product Grid */}
-        <ProductGrid products={rakhiProducts} />
+        {/* Product Grid inside Suspense */}
+        <Suspense fallback={
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-10">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <ProductCardSkeleton key={idx} />
+            ))}
+          </div>
+        }>
+          <RakhisProductsContent />
+        </Suspense>
 
       </div>
     </section>
   );
+}
+
+async function RakhisProductsContent() {
+  const allProducts = await getProductsServer();
+  const rakhiProducts = allProducts.filter((p) => p.category === "rakhis");
+  return <ProductGrid products={rakhiProducts} />;
 }

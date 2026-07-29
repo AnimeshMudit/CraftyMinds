@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -12,6 +12,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -35,7 +37,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           src={product.image_url}
           alt={product.title}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-104"
+          onLoad={() => setImgLoaded(true)}
+          className={`object-cover transition-all duration-700 group-hover:scale-104 ${
+            imgLoaded ? "opacity-100" : "opacity-0"
+          }`}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
         />
 

@@ -36,22 +36,22 @@ export default function Footer() {
           <h4 className="text-xs uppercase tracking-widest font-semibold text-foreground/80">Explore</h4>
           <ul className="space-y-2 text-sm text-foreground/70">
             <li>
-              <Link href="/mdf" className="hover:text-accent transition-colors duration-300">
+              <Link href="/mdf" className="hover:text-accent transition-colors duration-300 active:scale-[0.98] active:opacity-80 inline-block">
                 MDF Board Arts
               </Link>
             </li>
             <li>
-              <Link href="/pouches" className="hover:text-accent transition-colors duration-300">
+              <Link href="/pouches" className="hover:text-accent transition-colors duration-300 active:scale-[0.98] active:opacity-80 inline-block">
                 Hand-painted Pouches
               </Link>
             </li>
             <li>
-              <Link href="/magnets" className="hover:text-accent transition-colors duration-300">
+              <Link href="/magnets" className="hover:text-accent transition-colors duration-300 active:scale-[0.98] active:opacity-80 inline-block">
                 Fridge Magnets
               </Link>
             </li>
             <li>
-              <Link href="/rakhis" className="hover:text-accent transition-colors duration-300">
+              <Link href="/rakhis" className="hover:text-accent transition-colors duration-300 active:scale-[0.98] active:opacity-80 inline-block">
                 Handmade Rakhis
               </Link>
             </li>
@@ -68,7 +68,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Chat with us on WhatsApp"
-                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
+                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group active:scale-[0.98] active:opacity-80"
               >
                 <MessageCircle size={16} className="text-[#25D366] group-hover:scale-110 transition-transform duration-300" />
                 <span>WhatsApp</span>
@@ -80,7 +80,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Follow us on Instagram"
-                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
+                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group active:scale-[0.98] active:opacity-80"
               >
                 <Instagram size={16} className="text-accent group-hover:scale-110 transition-transform duration-300" />
                 <span>{contactConfig.instagramHandle}</span>
@@ -90,7 +90,7 @@ export default function Footer() {
               <a
                 href={`mailto:${contactConfig.supportEmail}`}
                 aria-label="Send us an email"
-                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
+                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group active:scale-[0.98] active:opacity-80"
               >
                 <Mail size={16} className="text-accent group-hover:scale-110 transition-transform duration-300" />
                 <span>{contactConfig.supportEmail}</span>
@@ -105,10 +105,10 @@ export default function Footer() {
         <p>© {currentYear} CRAFTY MIND STUDIO. ALL RIGHTS RESERVED.</p>
         
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 uppercase text-[10px] font-medium text-foreground/60">
-          <Link href="/privacy-policy" className="hover:text-accent transition-colors">Privacy Policy</Link>
-          <Link href="/terms-and-conditions" className="hover:text-accent transition-colors">Terms & Conditions</Link>
-          <Link href="/shipping-policy" className="hover:text-accent transition-colors">Shipping Policy</Link>
-          <Link href="/refund-policy" className="hover:text-accent transition-colors">Refund Policy</Link>
+          <Link href="/privacy-policy" className="hover:text-accent transition-colors active:scale-95 active:opacity-85">Privacy Policy</Link>
+          <Link href="/terms-and-conditions" className="hover:text-accent transition-colors active:scale-95 active:opacity-85">Terms & Conditions</Link>
+          <Link href="/shipping-policy" className="hover:text-accent transition-colors active:scale-95 active:opacity-85">Shipping Policy</Link>
+          <Link href="/refund-policy" className="hover:text-accent transition-colors active:scale-95 active:opacity-85">Refund Policy</Link>
         </div>
         
         <p className="flex items-center gap-1">
