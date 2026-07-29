@@ -4,10 +4,11 @@ import React, { useState, useEffect, Suspense, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CreditCard, AlertCircle, Check, Plus } from "lucide-react";
+import { ArrowLeft, CreditCard, AlertCircle, Check, Plus, MessageCircle } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
 import { calculateShipping, SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
+import { getWhatsAppLink } from "@/lib/contact";
 
 interface CheckoutFormData {
   fullName: string;
@@ -1151,6 +1152,21 @@ function CheckoutContent() {
                   </>
                 )}
               </div>
+            </div>
+
+            {/* Need Help WhatsApp block */}
+            <div className="bg-white rounded-3xl border border-border-custom p-5 shadow-xs text-center space-y-1.5 animate-fadeIn">
+              <span className="text-xs text-foreground/60 font-sans block">Need help?</span>
+              <a
+                href={getWhatsAppLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Chat with us on WhatsApp for order assistance"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent/80 transition-colors uppercase tracking-wider font-sans"
+              >
+                <MessageCircle size={14} className="text-[#25D366] transition-transform duration-300 hover:scale-110" />
+                <span>Chat with us on WhatsApp</span>
+              </a>
             </div>
 
           </div>

@@ -3,7 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Instagram, Mail } from "lucide-react";
+import { Instagram, Mail, MessageCircle } from "lucide-react";
+import { contactConfig, getWhatsAppLink } from "@/lib/contact";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -63,22 +64,36 @@ export default function Footer() {
           <ul className="space-y-3.5 text-sm text-foreground/70">
             <li>
               <a
-                href="https://instagram.com/craftymindstudio"
+                href={getWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Chat with us on WhatsApp"
                 className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
               >
-                <Instagram size={16} className="text-accent group-hover:scale-110 transition-transform duration-300" />
-                <span>@craftymindstudio</span>
+                <MessageCircle size={16} className="text-[#25D366] group-hover:scale-110 transition-transform duration-300" />
+                <span>WhatsApp</span>
               </a>
             </li>
             <li>
               <a
-                href="mailto:craftymindstudios@gmail.com"
+                href={contactConfig.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow us on Instagram"
+                className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
+              >
+                <Instagram size={16} className="text-accent group-hover:scale-110 transition-transform duration-300" />
+                <span>{contactConfig.instagramHandle}</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href={`mailto:${contactConfig.supportEmail}`}
+                aria-label="Send us an email"
                 className="flex items-center space-x-2.5 hover:text-accent transition-colors duration-300 group"
               >
                 <Mail size={16} className="text-accent group-hover:scale-110 transition-transform duration-300" />
-                <span>craftymindstudios@gmail.com</span>
+                <span>{contactConfig.supportEmail}</span>
               </a>
             </li>
           </ul>

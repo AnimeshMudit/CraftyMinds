@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { Product } from "@/types/product";
-import { ShoppingBag, Check } from "lucide-react";
+import { ShoppingBag, Check, MessageCircle } from "lucide-react";
 import QuantitySelector from "./Cart/QuantitySelector";
+import { getProductWhatsAppLink } from "@/lib/contact";
 
 interface ProductPurchaseSectionProps {
   product: Product;
@@ -34,7 +35,7 @@ export default function ProductPurchaseSection({ product }: ProductPurchaseSecti
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Quantity Selector and Add to Cart Row */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4">
         {/* Quantity control */}
@@ -73,6 +74,18 @@ export default function ProductPurchaseSection({ product }: ProductPurchaseSecti
           </button>
         </div>
       </div>
+
+      {/* Ask on WhatsApp CTA */}
+      <a
+        href={getProductWhatsAppLink(product.title)}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Ask about "${product.title}" on WhatsApp`}
+        className="w-full flex items-center justify-center gap-2.5 py-3 md:py-4 rounded-full border border-border-custom hover:border-accent/40 text-foreground/80 hover:text-accent font-semibold uppercase tracking-widest text-xs transition-all duration-300 shadow-xs hover:shadow-sm cursor-pointer text-center bg-white"
+      >
+        <MessageCircle size={16} className="text-[#25D366] transition-transform duration-300 hover:scale-110" />
+        <span>Ask on WhatsApp</span>
+      </a>
     </div>
   );
 }

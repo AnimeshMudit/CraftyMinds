@@ -72,7 +72,7 @@ export default function AboutSection() {
               <p className="text-accent font-medium">❤️ Handmade with Love</p>
             </div>
             <p className="font-serif italic text-accent text-base sm:text-lg pt-2">
-              {"\"It&apos;s never too late to begin again, and every dream deserves a second chance.\""}
+              {"\"It's never too late to begin again, and every dream deserves a second chance.\""}
             </p>
           </div>
 
