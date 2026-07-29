@@ -3,11 +3,23 @@ import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardSkeleton } from "@/components/Skeletons";
 
+import { getCanonicalUrl } from "@/lib/seo";
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Handmade Pouches | Crafty Mind Studio",
-  description: "Browse our collection of hand-stitched quilted cotton pouches, linen makeup bags, and tech organizers.",
+export const metadata: Metadata = {
+  title: "Handmade Pouches",
+  description: "Browse beautiful quilted block-print zipper pouches, cosmetic bags, and fabric organizers, hand-sewn and decorated with original hand-painted artwork.",
+  alternates: {
+    canonical: getCanonicalUrl("/pouches"),
+  },
+  openGraph: {
+    type: "website",
+    url: getCanonicalUrl("/pouches"),
+    title: "Handmade Pouches | Crafty Mind Studio",
+    description: "Browse beautiful quilted block-print zipper pouches, cosmetic bags, and fabric organizers, hand-sewn and decorated with original hand-painted artwork.",
+  },
 };
 
 export default function PouchesCategoryPage() {

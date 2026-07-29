@@ -3,11 +3,23 @@ import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardSkeleton } from "@/components/Skeletons";
 
+import { getCanonicalUrl } from "@/lib/seo";
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Handmade Rakhis | Crafty Mind Studio",
-  description: "Explore handcrafted rakhis made with love and traditional artistry by Crafty Mind Studio.",
+export const metadata: Metadata = {
+  title: "Handmade Rakhis",
+  description: "Explore a curated collection of handcrafted rakhis made with premium silk threads, delicate beads, crochet details, and hand-painted centerpiece charms.",
+  alternates: {
+    canonical: getCanonicalUrl("/rakhis"),
+  },
+  openGraph: {
+    type: "website",
+    url: getCanonicalUrl("/rakhis"),
+    title: "Handmade Rakhis | Crafty Mind Studio",
+    description: "Explore a curated collection of handcrafted rakhis made with premium silk threads, delicate beads, crochet details, and hand-painted centerpiece charms.",
+  },
 };
 
 export default function RakhisCategoryPage() {

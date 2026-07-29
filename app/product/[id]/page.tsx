@@ -9,6 +9,9 @@ import ProductImage from "@/components/ProductImage";
 import { Shield, Sparkles, RefreshCw, ChevronLeft } from "lucide-react";
 import { ProductDetailsSkeleton } from "@/components/Skeletons";
 
+import type { Metadata } from "next";
+import { siteConfig, getCanonicalUrl } from "@/lib/seo";
+
 interface ProductPageProps {
   params: Promise<{
     id: string;
@@ -16,6 +19,49 @@ interface ProductPageProps {
 }
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProductServer(id);
+
+  if (!product) {
+    return {
+      title: "Product Not Found",
+    };
+  }
+
+  const cleanDescription = product.description
+    ? product.description.substring(0, 160)
+    : `Buy ${product.title} from Crafty Mind Studio. Handcrafted, high-quality, and hand-painted in India.`;
+
+  const pageUrl = getCanonicalUrl(`/product/${product.id}`);
+
+  return {
+    title: product.title,
+    description: cleanDescription,
+    alternates: {
+      canonical: pageUrl,
+    },
+    openGraph: {
+      title: `${product.title} | ${siteConfig.name}`,
+      description: cleanDescription,
+      url: pageUrl,
+      type: "article",
+      images: [
+        {
+          url: product.image_url,
+          alt: product.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.title} | ${siteConfig.name}`,
+      description: cleanDescription,
+      images: [product.image_url],
+    },
+  };
+}
 
 export default function ProductDetailsPage({ params }: ProductPageProps) {
   return (

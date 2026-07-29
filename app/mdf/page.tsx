@@ -3,11 +3,23 @@ import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardSkeleton } from "@/components/Skeletons";
 
+import { getCanonicalUrl } from "@/lib/seo";
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "MDF Board Arts | Crafty Mind Studio",
-  description: "Browse our collection of hand-painted wood plates, intricate mandalas, and bohemian geometric signs.",
+export const metadata: Metadata = {
+  title: "MDF Board Arts",
+  description: "Explore detailed, hand-painted wooden panels and circular plates styled with folk motifs, celestial art, and mandalas. Lovingly finished with a premium gloss.",
+  alternates: {
+    canonical: getCanonicalUrl("/mdf"),
+  },
+  openGraph: {
+    type: "website",
+    url: getCanonicalUrl("/mdf"),
+    title: "MDF Board Arts | Crafty Mind Studio",
+    description: "Explore detailed, hand-painted wooden panels and circular plates styled with folk motifs, celestial art, and mandalas. Lovingly finished with a premium gloss.",
+  },
 };
 
 export default function MdfCategoryPage() {

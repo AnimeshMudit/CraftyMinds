@@ -3,11 +3,23 @@ import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardSkeleton } from "@/components/Skeletons";
 
+import { getCanonicalUrl } from "@/lib/seo";
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Fridge Magnets | Crafty Mind Studio",
-  description: "Browse our collection of hand-molded clay, painted pine slice, and wildflower resin fridge magnets.",
+export const metadata: Metadata = {
+  title: "Fridge Magnets",
+  description: "Browse hand-sculpted polymer clay magnets, painted wood slices with natural bark textures, and glass mandalas. Adorable details to warm up everyday spaces.",
+  alternates: {
+    canonical: getCanonicalUrl("/magnets"),
+  },
+  openGraph: {
+    type: "website",
+    url: getCanonicalUrl("/magnets"),
+    title: "Fridge Magnets | Crafty Mind Studio",
+    description: "Browse hand-sculpted polymer clay magnets, painted wood slices with natural bark textures, and glass mandalas. Adorable details to warm up everyday spaces.",
+  },
 };
 
 export default function MagnetsCategoryPage() {
