@@ -14,6 +14,10 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Edit Product | Crafty Minds Admin",
   description: "Update product features, price, description and replace image.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function AdminEditProductPage({ params }: EditProductPageProps) {
