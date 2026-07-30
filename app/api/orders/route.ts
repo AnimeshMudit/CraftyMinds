@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getCustomerSession } from "@/lib/auth/customer-session-server";
+import { getProductsServer } from "@/lib/supabase/products-server";
+import { calculateShipping } from "@/lib/shipping";
 
 // Helper to generate a sequential order number
 async function generateOrderNumber(supabase: SupabaseClient): Promise<string> {
@@ -40,7 +42,7 @@ async function generateOrderNumber(supabase: SupabaseClient): Promise<string> {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { customer, address, items, subtotal, total } = body;
+    const { customer, address, items } = body;
     const customerSession = await getCustomerSession();
 
     if (!customerSession) {
@@ -81,20 +83,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Validation: Subtotal and total are valid positive numbers
-    if (typeof subtotal !== "number" || subtotal < 0) {
+    // 4. Trust only the product ID and quantity from the client. Price, title,
+    // and every other product detail is re-fetched from the database so that
+    // the amount actually charged can never be set by the request body.
+    const requestedItems = items.map((item: { product?: { id?: string }; quantity?: number }) => ({
+      productId: item?.product?.id,
+      quantity: Number(item?.quantity),
+    }));
+
+    const hasInvalidItem = requestedItems.some(
+      ({ productId, quantity }) =>
+        !productId || !Number.isInteger(quantity) || quantity < 1 || quantity > 99
+    );
+
+    if (hasInvalidItem) {
       return NextResponse.json(
-        { success: false, error: "Invalid subtotal amount." },
+        { success: false, error: "One or more items in the cart are invalid." },
         { status: 400 }
       );
     }
 
-    if (typeof total !== "number" || total < 0) {
-      return NextResponse.json(
-        { success: false, error: "Invalid total amount." },
-        { status: 400 }
-      );
+    const catalogProducts = await getProductsServer();
+    const productById = new Map(catalogProducts.map((product) => [product.id, product]));
+
+    const verifiedItems: { product: (typeof catalogProducts)[number]; quantity: number }[] = [];
+    for (const { productId, quantity } of requestedItems) {
+      const product = productById.get(productId as string);
+      if (!product) {
+        return NextResponse.json(
+          { success: false, error: "One or more items in the cart are no longer available." },
+          { status: 400 }
+        );
+      }
+      verifiedItems.push({ product, quantity });
     }
+
+    const subtotal = verifiedItems.reduce(
+      (sum, item) => sum + item.product.price * item.quantity,
+      0
+    );
+    const total = subtotal + calculateShipping(subtotal);
 
     // Create the server-side Supabase client using Service Role key
     const supabase = createServerSupabaseClient();
@@ -122,7 +150,7 @@ export async function POST(req: NextRequest) {
         city: address.city,
         state: address.state,
         pin_code: address.pinCode,
-        items: items, // Direct JSON array insertion
+        items: verifiedItems, // Server-verified against the products table, never trusted from the client
         subtotal: subtotal,
         total: total,
         payment_status: "pending",

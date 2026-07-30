@@ -17,9 +17,9 @@ async function getCryptoKey(secret: string): Promise<CryptoKey> {
 }
 
 export async function encryptSession(payload: Record<string, unknown>): Promise<string> {
-  const secret = process.env.ADMIN_PASSWORD;
+  const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) {
-    throw new Error("ADMIN_PASSWORD environment variable is not set.");
+    throw new Error("ADMIN_SESSION_SECRET environment variable is not set.");
   }
   
   const payloadStr = JSON.stringify(payload);
@@ -36,9 +36,9 @@ export async function encryptSession(payload: Record<string, unknown>): Promise<
 }
 
 export async function decryptSession(token: string): Promise<Record<string, unknown> | null> {
-  const secret = process.env.ADMIN_PASSWORD;
+  const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) {
-    throw new Error("ADMIN_PASSWORD environment variable is not set.");
+    throw new Error("ADMIN_SESSION_SECRET environment variable is not set.");
   }
 
   try {
