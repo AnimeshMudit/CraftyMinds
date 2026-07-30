@@ -27,7 +27,7 @@ export default function Hero() {
           hidden: replaced,
         };
       });
-    }, 5000); // 10 seconds interval
+    }, 10000); // 10 seconds interval
 
     return () => clearInterval(interval);
   }, [isHovered]);
@@ -60,7 +60,7 @@ export default function Hero() {
     {
       id: 3,
       src: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1785334975837_1000230095.jpg",
-      alt: "Rakhis",
+      alt: "Handcrafted Designer Rakhis made with silk threads and beads",
       label: "Rakhis",
       priority: false,
       sizes: "(max-width: 768px) 35vw, 18vw",

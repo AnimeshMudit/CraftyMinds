@@ -45,6 +45,12 @@ export function generateOrganizationSchema() {
     "url": siteConfig.url,
     "logo": siteConfig.defaultOgImage,
     "sameAs": socialLinks,
+    "contactPoint": {
+      "@type": "ContactPoint" as const,
+      "telephone": contactConfig.whatsAppDisplay,
+      "contactType": "customer support",
+      "email": contactConfig.supportEmail,
+    }
   };
 }
 
@@ -57,5 +63,21 @@ export function generateWebsiteSchema() {
     "@type": "WebSite" as const,
     "name": siteConfig.name,
     "url": siteConfig.url,
+  };
+}
+
+/**
+ * Generates schema.org BreadcrumbList structured data markup.
+ */
+export function generateBreadcrumbSchema(items: { name: string; item: string }[]) {
+  return {
+    "@context": "https://schema.org" as const,
+    "@type": "BreadcrumbList" as const,
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem" as const,
+      "position": index + 1,
+      "name": item.name,
+      "item": item.item,
+    })),
   };
 }

@@ -1,21 +1,36 @@
 import React from "react";
 import PolicyLayout from "@/components/Policy/PolicyLayout";
 import { SHIPPING_FREE_THRESHOLD, SHIPPING_FLAT_CHARGE } from "@/lib/shipping";
+import { getCanonicalUrl, siteConfig } from "@/lib/seo";
+import { generateBreadcrumbSchema } from "@/lib/schema";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "Shipping Policy | Crafty Minds Studio",
-  description: "Learn about our processing timelines, estimated domestic shipping times, and tracking details at Crafty Minds Studio.",
+export const metadata: Metadata = {
+  title: "Shipping Policy | Crafty Mind Studio",
+  description: "Learn about our processing timelines, estimated domestic shipping times, and tracking details at Crafty Mind Studio.",
+  alternates: {
+    canonical: getCanonicalUrl("/shipping-policy"),
+  },
   openGraph: {
-    title: "Shipping Policy | Crafty Minds Studio",
+    title: "Shipping Policy | Crafty Mind Studio",
     description: "Read details about order processing, packing precautions, and estimated delivery dates across India.",
   },
 };
 
 export default function ShippingPolicyPage() {
   const lastUpdatedDate = "July 18, 2026";
+  const breadcrumbsSchema = generateBreadcrumbSchema([
+    { name: "Home", item: siteConfig.url },
+    { name: "Shipping Policy", item: `${siteConfig.url}/shipping-policy` },
+  ]);
 
   return (
-    <PolicyLayout title="Shipping Policy" lastUpdated={lastUpdatedDate}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+      />
+      <PolicyLayout title="Shipping Policy" lastUpdated={lastUpdatedDate}>
       <div className="space-y-6 font-sans text-sm md:text-base leading-relaxed text-slate-600">
         
         <p>
@@ -104,5 +119,6 @@ export default function ShippingPolicyPage() {
 
       </div>
     </PolicyLayout>
+    </>
   );
 }

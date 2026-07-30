@@ -1,20 +1,35 @@
 import React from "react";
 import PolicyLayout from "@/components/Policy/PolicyLayout";
+import { getCanonicalUrl, siteConfig } from "@/lib/seo";
+import { generateBreadcrumbSchema } from "@/lib/schema";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "Refund and Cancellation Policy | Crafty Minds Studio",
-  description: "Read our balance refund terms, cancellation timelines, and damage reporting instructions at Crafty Minds Studio.",
+export const metadata: Metadata = {
+  title: "Refund and Cancellation Policy | Crafty Mind Studio",
+  description: "Read our balance refund terms, cancellation timelines, and damage reporting instructions at Crafty Mind Studio.",
+  alternates: {
+    canonical: getCanonicalUrl("/refund-policy"),
+  },
   openGraph: {
-    title: "Refund and Cancellation Policy | Crafty Minds Studio",
+    title: "Refund and Cancellation Policy | Crafty Mind Studio",
     description: "Read details about returns, pre-dispatch cancellations, customized order exceptions, and Razorpay refunds.",
   },
 };
 
 export default function RefundPolicyPage() {
   const lastUpdatedDate = "July 18, 2026";
+  const breadcrumbsSchema = generateBreadcrumbSchema([
+    { name: "Home", item: siteConfig.url },
+    { name: "Refund & Cancellation Policy", item: `${siteConfig.url}/refund-policy` },
+  ]);
 
   return (
-    <PolicyLayout title="Refund & Cancellation Policy" lastUpdated={lastUpdatedDate}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+      />
+      <PolicyLayout title="Refund & Cancellation Policy" lastUpdated={lastUpdatedDate}>
       <div className="space-y-6 font-sans text-sm md:text-base leading-relaxed text-slate-600">
         
         <p>
@@ -98,5 +113,6 @@ export default function RefundPolicyPage() {
 
       </div>
     </PolicyLayout>
+    </>
   );
 }

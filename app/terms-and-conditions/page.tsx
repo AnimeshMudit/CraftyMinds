@@ -1,20 +1,35 @@
 import React from "react";
 import PolicyLayout from "@/components/Policy/PolicyLayout";
+import { getCanonicalUrl, siteConfig } from "@/lib/seo";
+import { generateBreadcrumbSchema } from "@/lib/schema";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "Terms and Conditions | Crafty Minds Studio",
-  description: "Read our website terms of use, payment rules, and handcrafted product policies at Crafty Minds Studio.",
+export const metadata: Metadata = {
+  title: "Terms and Conditions | Crafty Mind Studio",
+  description: "Read our website terms of use, payment rules, and handcrafted product policies at Crafty Mind Studio.",
+  alternates: {
+    canonical: getCanonicalUrl("/terms-and-conditions"),
+  },
   openGraph: {
-    title: "Terms and Conditions | Crafty Minds Studio",
+    title: "Terms and Conditions | Crafty Mind Studio",
     description: "Understand our guidelines, checkout policies, and information regarding handcrafted variances.",
   },
 };
 
 export default function TermsAndConditionsPage() {
   const lastUpdatedDate = "July 18, 2026";
+  const breadcrumbsSchema = generateBreadcrumbSchema([
+    { name: "Home", item: siteConfig.url },
+    { name: "Terms & Conditions", item: `${siteConfig.url}/terms-and-conditions` },
+  ]);
 
   return (
-    <PolicyLayout title="Terms & Conditions" lastUpdated={lastUpdatedDate}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+      />
+      <PolicyLayout title="Terms & Conditions" lastUpdated={lastUpdatedDate}>
       <div className="space-y-6 font-sans text-sm md:text-base leading-relaxed text-slate-600">
         
         <p>
@@ -93,5 +108,6 @@ export default function TermsAndConditionsPage() {
 
       </div>
     </PolicyLayout>
+    </>
   );
 }

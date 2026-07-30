@@ -1,20 +1,35 @@
 import React from "react";
 import PolicyLayout from "@/components/Policy/PolicyLayout";
+import { getCanonicalUrl, siteConfig } from "@/lib/seo";
+import { generateBreadcrumbSchema } from "@/lib/schema";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "Privacy Policy | Crafty Minds Studio",
-  description: "Learn how we handle, process, and protect your order details and shipping information at Crafty Minds Studio.",
+export const metadata: Metadata = {
+  title: "Privacy Policy | Crafty Mind Studio",
+  description: "Learn how we handle, process, and protect your order details and shipping information at Crafty Mind Studio.",
+  alternates: {
+    canonical: getCanonicalUrl("/privacy-policy"),
+  },
   openGraph: {
-    title: "Privacy Policy | Crafty Minds Studio",
+    title: "Privacy Policy | Crafty Mind Studio",
     description: "Read our privacy guidelines regarding order tracking, secure Razorpay checkout, and personal data protection.",
   },
 };
 
 export default function PrivacyPolicyPage() {
   const lastUpdatedDate = "July 18, 2026";
+  const breadcrumbsSchema = generateBreadcrumbSchema([
+    { name: "Home", item: siteConfig.url },
+    { name: "Privacy Policy", item: `${siteConfig.url}/privacy-policy` },
+  ]);
 
   return (
-    <PolicyLayout title="Privacy Policy" lastUpdated={lastUpdatedDate}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+      />
+      <PolicyLayout title="Privacy Policy" lastUpdated={lastUpdatedDate}>
       <div className="space-y-6 font-sans text-sm md:text-base leading-relaxed text-slate-600">
         
         <p>
@@ -100,5 +115,6 @@ export default function PrivacyPolicyPage() {
 
       </div>
     </PolicyLayout>
+    </>
   );
 }

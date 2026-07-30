@@ -3,7 +3,8 @@ import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardSkeleton } from "@/components/Skeletons";
 
-import { getCanonicalUrl } from "@/lib/seo";
+import { getCanonicalUrl, siteConfig } from "@/lib/seo";
+import { generateBreadcrumbSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -23,8 +24,18 @@ export const metadata: Metadata = {
 };
 
 export default function RakhisCategoryPage() {
+  const breadcrumbsSchema = generateBreadcrumbSchema([
+    { name: "Home", item: siteConfig.url },
+    { name: "Handmade Rakhis", item: `${siteConfig.url}/rakhis` },
+  ]);
+
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-24 min-h-screen bg-background">
+      {/* Breadcrumb JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         
         {/* Category Header */}

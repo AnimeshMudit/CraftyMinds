@@ -99,9 +99,9 @@ export default function Testimonials() {
                 </div>
                 
                 <div>
-                  <h4 className="font-serif text-sm font-semibold text-foreground tracking-wide">
+                  <h3 className="font-serif text-sm font-semibold text-foreground tracking-wide">
                     {t.name}
-                  </h4>
+                  </h3>
                   <p className="text-[10px] uppercase tracking-wider text-foreground/50 font-sans">
                     {t.product} &bull; {t.location}
                   </p>

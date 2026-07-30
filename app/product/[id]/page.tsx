@@ -11,7 +11,7 @@ import { ProductDetailsSkeleton } from "@/components/Skeletons";
 
 import type { Metadata } from "next";
 import { siteConfig, getCanonicalUrl } from "@/lib/seo";
-import { generateProductSchema } from "@/lib/schema";
+import { generateProductSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 interface ProductPageProps {
   params: Promise<{
@@ -104,12 +104,26 @@ async function ProductDetailsContent({ params }: ProductPageProps) {
   const careInstructions = getCareInstructions(product.category);
   const productSchema = generateProductSchema(product);
 
+  const categoryPath = product.category === "pouch" ? "/pouches" : product.category === "magnet" ? "/magnets" : `/${product.category}`;
+  const categoryName = product.category === "mdf" ? "MDF Arts" : product.category === "pouch" ? "Hand-painted Pouches" : product.category === "rakhis" ? "Handmade Rakhis" : "Fridge Magnets";
+
+  const breadcrumbsSchema = generateBreadcrumbSchema([
+    { name: "Home", item: siteConfig.url },
+    { name: categoryName, item: `${siteConfig.url}${categoryPath}` },
+    { name: product.title, item: `${siteConfig.url}/product/${product.id}` },
+  ]);
+
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-24 bg-background">
       {/* Product JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      {/* Breadcrumb JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         
@@ -162,7 +176,7 @@ async function ProductDetailsContent({ params }: ProductPageProps) {
               <div className="bg-accent-secondary/5 border border-accent-secondary/10 rounded-2xl p-5 flex items-start gap-4 order-3 lg:order-2">
                 <Sparkles className="text-accent-secondary shrink-0 mt-0.5" size={20} />
                 <div className="space-y-1">
-                  <h4 className="text-xs uppercase tracking-wider font-semibold text-accent-secondary">Customizable Design</h4>
+                  <p className="text-xs uppercase tracking-wider font-semibold text-accent-secondary">Customizable Design</p>
                   <p className="text-foreground/80 text-xs sm:text-sm font-light font-sans leading-relaxed">
                     This design is hand-painted to order. You can request custom colors, family names, dimensions, or custom inscriptions by emailing us at craftymindstudios@gmail.com
                   </p>
