@@ -33,7 +33,7 @@ export default function Home() {
     {
       title: "Handmade Rakhis",
       description: "Celebrate the sacred sibling bond with handcrafted designer rakhis made from premium threads, delicate beads, and crochet.",
-      imageSrc: "/images/rakhi_showcase.jpg",
+      imageSrc: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1785334975837_1000230095.jpg",
       href: "/rakhis",
     },
   ];

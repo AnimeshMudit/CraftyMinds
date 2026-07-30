@@ -3,10 +3,69 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 
 export default function Hero() {
+  const [showcaseState, setShowcaseState] = React.useState({
+    visible: [0, 1, 2],
+    hidden: 3,
+  });
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      const frameToReplace = Math.floor(Math.random() * 3);
+      setShowcaseState((prev) => {
+        const nextVisible = [...prev.visible];
+        const currentHidden = prev.hidden;
+        const replaced = nextVisible[frameToReplace];
+        nextVisible[frameToReplace] = currentHidden;
+        return {
+          visible: nextVisible,
+          hidden: replaced,
+        };
+      });
+    }, 5000); // 10 seconds interval
+
+    return () => clearInterval(interval);
+  }, [isHovered]);
+
+  const collections = [
+    {
+      id: 0,
+      src: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783099587508_ChatGPT_Image_Jul_3__2026__10_55_05_PM.png",
+      alt: "MDF Hand-painted Mandala Art",
+      label: "MDF Board Arts",
+      priority: true,
+      sizes: "(max-width: 768px) 50vw, 30vw",
+    },
+    {
+      id: 1,
+      src: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101679840_ChatGPT_Image_Jul_3__2026__02_05_32_AM.png",
+      alt: "Handmade Quilted Pouch",
+      label: "Fabric Pouches",
+      priority: false,
+      sizes: "(max-width: 768px) 40vw, 20vw",
+    },
+    {
+      id: 2,
+      src: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101937753_ChatGPT_Image_Jul_3__2026__11_35_05_PM.png",
+      alt: "Handmade Fridge Magnets",
+      label: "Clay Magnets",
+      priority: false,
+      sizes: "(max-width: 768px) 35vw, 18vw",
+    },
+    {
+      id: 3,
+      src: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1785334975837_1000230095.jpg",
+      alt: "Rakhis",
+      label: "Rakhis",
+      priority: false,
+      sizes: "(max-width: 768px) 35vw, 18vw",
+    },
+  ];
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -98,66 +157,107 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Artistic Collage Column */}
+        {/* Artistic Collage Column - Living Product Showcase */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           className="lg:col-span-6 relative h-[280px] sm:h-[450px] md:h-[550px] w-full flex items-center justify-center mt-4 lg:mt-0"
         >
-          {/* Main Large Image (MDF Art) */}
+          {/* Frame 0 (Main Large Image - MDF Art Position) */}
           <motion.div
             variants={imageVariants}
             whileHover={{ scale: 1.02, zIndex: 30 }}
             className="absolute left-[5%] top-[10%] w-[55%] h-[70%] rounded-2xl overflow-hidden border-4 border-white shadow-xl rotate-[-2deg] cursor-pointer group"
           >
-            <Image
-              src="https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783099587508_ChatGPT_Image_Jul_3__2026__10_55_05_PM.png"
-              alt="MDF Hand-painted Mandala Art"
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              priority
-              sizes="(max-width: 768px) 50vw, 30vw"
-            />
-            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-              <span className="text-xs uppercase tracking-wider font-semibold text-white bg-accent/90 px-3 py-1.5 rounded-md">MDF Board Arts</span>
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={showcaseState.visible[0]}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="relative w-full h-full"
+              >
+                <Image
+                  src={collections[showcaseState.visible[0]].src}
+                  alt={collections[showcaseState.visible[0]].alt}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  priority={collections[showcaseState.visible[0]].priority}
+                  sizes={collections[showcaseState.visible[0]].sizes}
+                />
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-xs uppercase tracking-wider font-semibold text-white bg-accent/90 px-3 py-1.5 rounded-md">
+                    {collections[showcaseState.visible[0]].label}
+                  </span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
-          {/* Secondary Overlapping Image (Handmade Pouch) */}
+          {/* Frame 1 (Secondary Overlapping Image - Handmade Pouch Position) */}
           <motion.div
             variants={imageVariants}
             whileHover={{ scale: 1.03, zIndex: 30 }}
             className="absolute right-[5%] top-[5%] w-[42%] h-[50%] rounded-2xl overflow-hidden border-4 border-white shadow-lg rotate-[3deg] cursor-pointer group"
           >
-            <Image
-              src="https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101679840_ChatGPT_Image_Jul_3__2026__02_05_32_AM.png"
-              alt="Handmade Quilted Pouch"
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 40vw, 20vw"
-            />
-            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-              <span className="text-xs uppercase tracking-wider font-semibold text-white bg-accent/90 px-3 py-1.5 rounded-md">Fabric Pouches</span>
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={showcaseState.visible[1]}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="relative w-full h-full"
+              >
+                <Image
+                  src={collections[showcaseState.visible[1]].src}
+                  alt={collections[showcaseState.visible[1]].alt}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes={collections[showcaseState.visible[1]].sizes}
+                />
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-xs uppercase tracking-wider font-semibold text-white bg-accent/90 px-3 py-1.5 rounded-md">
+                    {collections[showcaseState.visible[1]].label}
+                  </span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
-          {/* Third Overlapping Image (Fridge Magnets) */}
+          {/* Frame 2 (Third Overlapping Image - Fridge Magnet Position) */}
           <motion.div
             variants={imageVariants}
             whileHover={{ scale: 1.03, zIndex: 30 }}
-            className="absolute right-[12%] bottom-[8%] w-[38%] h-[42%] rounded-2xl overflow-hidden border-4 border-white shadow-lg rotate-[-4deg] cursor-pointer group"
+            className="absolute right-[12%] bottom-[10%] w-[40%] h-[44%] rounded-2xl overflow-hidden border-4 border-white shadow-lg rotate-[-4deg] cursor-pointer group"
           >
-            <Image
-              src="https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1783101937753_ChatGPT_Image_Jul_3__2026__11_35_05_PM.png"
-              alt="Handmade Fridge Magnets"
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 35vw, 18vw"
-            />
-            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-              <span className="text-xs uppercase tracking-wider font-semibold text-white bg-accent/90 px-3 py-1.5 rounded-md">Clay Magnets</span>
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={showcaseState.visible[2]}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="relative w-full h-full"
+              >
+                <Image
+                  src={collections[showcaseState.visible[2]].src}
+                  alt={collections[showcaseState.visible[2]].alt}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes={collections[showcaseState.visible[2]].sizes}
+                />
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-xs uppercase tracking-wider font-semibold text-white bg-accent/90 px-3 py-1.5 rounded-md">
+                    {collections[showcaseState.visible[2]].label}
+                  </span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
           {/* Decorative small sticker badge */}
