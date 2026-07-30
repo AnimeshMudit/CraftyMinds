@@ -7,6 +7,7 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { CartProvider } from "@/context/CartContext";
 import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
 import { siteConfig } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -100,6 +101,7 @@ export default function RootLayout({
             <FloatingWhatsApp />
           </CartProvider>
         </CustomerAuthProvider>
+        <Analytics />
       </body>
     </html>
   );
