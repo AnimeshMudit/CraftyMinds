@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types/product";
-import { ShoppingBag, Box, Clipboard, Compass, Plus, Gift } from "lucide-react";
+import { ShoppingBag, Box, Clipboard, Compass, Plus, Gift, BarChart3 } from "lucide-react";
 
 interface DashboardClientProps {
   products: Product[];
@@ -87,17 +87,26 @@ export default function DashboardClient({ products }: DashboardClientProps) {
             Overview of your Crafty Minds Studio store catalog and inventory.
           </p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white text-xs font-semibold uppercase tracking-wider px-5 py-3 rounded-xl shadow-xs transition-all cursor-pointer"
-        >
-          <Plus size={16} />
-          <span>Add Product</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/analytics"
+            className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold uppercase tracking-wider px-5 py-3 rounded-xl shadow-xs transition-all cursor-pointer font-sans"
+          >
+            <BarChart3 size={16} />
+            <span>View Full Analytics</span>
+          </Link>
+          <Link
+            href="/admin/products/new"
+            className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-white text-xs font-semibold uppercase tracking-wider px-5 py-3 rounded-xl shadow-xs transition-all cursor-pointer font-sans"
+          >
+            <Plus size={16} />
+            <span>Add Product</span>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
           const isActive = selectedCategory === stat.id;
@@ -154,7 +163,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
           </div>
           <Link
             href="/admin/products"
-            className="text-xs uppercase tracking-wider font-semibold text-accent hover:text-accent/80 transition-colors"
+            className="text-xs uppercase tracking-wider font-semibold text-accent hover:text-accent/80 transition-colors font-sans"
           >
             View All Products
           </Link>
@@ -192,7 +201,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                             sizes="48px"
                           />
                         </div>
-                        <span className="font-medium text-slate-800 hover:text-accent transition-colors">
+                        <span className="font-medium text-slate-800 hover:text-accent transition-colors font-sans">
                           <Link href={`/admin/products`}>{product.title}</Link>
                         </span>
                       </td>
@@ -215,11 +224,11 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                       {/* Featured */}
                       <td className="py-4 px-6 text-center">
                         {product.featured ? (
-                          <span className="inline-block text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-2.5 py-0.5 rounded-sm">
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-2.5 py-0.5 rounded-sm font-sans">
                             Yes
                           </span>
                         ) : (
-                          <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm">
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm font-sans">
                             No
                           </span>
                         )}
@@ -227,11 +236,11 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                       {/* Customizable */}
                       <td className="py-4 px-6 text-center">
                         {product.customizable ? (
-                          <span className="inline-block text-[9px] uppercase tracking-wider bg-purple-500/10 text-purple-700 font-semibold px-2.5 py-0.5 rounded-sm">
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-purple-500/10 text-purple-700 font-semibold px-2.5 py-0.5 rounded-sm font-sans">
                             Yes
                           </span>
                         ) : (
-                          <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm">
+                          <span className="inline-block text-[9px] uppercase tracking-wider bg-slate-100 text-slate-400 font-semibold px-2.5 py-0.5 rounded-sm font-sans">
                             No
                           </span>
                         )}
@@ -245,7 +254,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
             {/* Mobile Cards View */}
             <div className="block md:hidden divide-y divide-slate-100">
               {filteredProducts.map((product) => (
-                <div key={product.id} className="p-4 flex gap-4 hover:bg-slate-50/50 transition-colors items-center">
+                <div key={product.id} className="p-4 flex gap-4 hover:bg-slate-50/50 transition-colors items-center font-sans">
                   <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
                     <Image
                       src={product.image_url}

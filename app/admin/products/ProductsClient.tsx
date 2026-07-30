@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Product } from "@/types/product";
 import { useToast } from "@/components/admin/Toast";
 import { Plus, Edit2, Trash2, Check, AlertTriangle, Image as ImageIcon } from "lucide-react";
@@ -13,10 +14,20 @@ interface ProductsClientProps {
 }
 
 export default function ProductsClient({ initialProducts }: ProductsClientProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { showToast } = useToast();
+
+  const handleRowClick = (productId: string, e: React.MouseEvent | React.KeyboardEvent) => {
+    // Avoid triggering navigation if user clicks on edit icon or delete button
+    const target = e.target as HTMLElement;
+    if (target.closest("button") || target.closest("a")) {
+      return;
+    }
+    router.push(`/admin/products/${productId}/edit`);
+  };
 
   const handleDelete = async () => {
     if (!productToDelete) return;
@@ -101,7 +112,18 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm font-sans text-slate-700">
                 {products.map((product) => (
-                  <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr
+                    key={product.id}
+                    onClick={(e) => handleRowClick(product.id, e)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleRowClick(product.id, e);
+                      }
+                    }}
+                    tabIndex={0}
+                    className="hover:bg-slate-50/60 transition-all duration-150 cursor-pointer focus:outline-none focus:bg-slate-50/80 focus:ring-2 focus:ring-accent/20"
+                  >
                     {/* Thumbnail + Title */}
                     <td className="py-4 px-6 flex items-center gap-4">
                       <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
@@ -187,7 +209,18 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
           {/* Mobile Cards View */}
           <div className="block md:hidden divide-y divide-slate-100">
             {products.map((product) => (
-              <div key={product.id} className="p-4 flex gap-4 hover:bg-slate-50/50 transition-colors items-start">
+              <div
+                key={product.id}
+                onClick={(e) => handleRowClick(product.id, e)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleRowClick(product.id, e);
+                  }
+                }}
+                tabIndex={0}
+                className="p-4 flex gap-4 hover:bg-slate-50/60 transition-all duration-150 items-start cursor-pointer focus:outline-none focus:bg-slate-50/80 focus:ring-2 focus:ring-accent/20"
+              >
                 {/* image */}
                 <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
                   <Image
