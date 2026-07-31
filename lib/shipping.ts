@@ -2,8 +2,8 @@
  * Shipping policy constants and calculations
  */
 
-export const SHIPPING_FREE_THRESHOLD = 199;
-export const SHIPPING_FLAT_CHARGE = 100;
+export const SHIPPING_FREE_THRESHOLD = 999;
+export const SHIPPING_FLAT_CHARGE = 79;
 
 /**
  * Calculate shipping charges based on order subtotal
