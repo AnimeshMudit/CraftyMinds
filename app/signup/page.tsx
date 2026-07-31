@@ -2,13 +2,13 @@
 
 import React, { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, Lock, Mail, UserRound } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
 function SignupContent() {
-  const router = useRouter();
+
   const searchParams = useSearchParams();
   const { syncSession } = useCustomerAuth();
   const [fullName, setFullName] = useState("");
@@ -57,8 +57,7 @@ function SignupContent() {
 
       if (data.session) {
         await syncSession(data.session);
-        router.replace(nextPath);
-        router.refresh();
+        window.location.replace(nextPath);
         return;
       }
 

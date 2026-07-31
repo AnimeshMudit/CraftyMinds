@@ -2,13 +2,13 @@
 
 import React, { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, Lock, Mail } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
 function LoginContent() {
-  const router = useRouter();
+
   const searchParams = useSearchParams();
   const { syncSession } = useCustomerAuth();
   const [email, setEmail] = useState("");
@@ -35,8 +35,7 @@ function LoginContent() {
 
       if (data.session) {
         await syncSession(data.session);
-        router.replace(nextPath);
-        router.refresh();
+        window.location.replace(nextPath);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to log in.";
