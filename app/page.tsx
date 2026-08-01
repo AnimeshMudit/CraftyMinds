@@ -87,7 +87,7 @@ export default function Home() {
       <HowItWorks />
 
       {/* 7. Testimonials */}
-      <Testimonials />
+      {/* <Testimonials /> */}
 
       {/* 8. Contact Call-to-Action */}
       <CTASection />
