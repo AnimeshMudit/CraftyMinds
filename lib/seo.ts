@@ -1,5 +1,5 @@
 export const siteConfig = {
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://craftymindstudio.in",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.craftymindstudio.in",
   name: "Crafty Mind Studio",
   brandName: "Crafty Mind Studio",
   defaultTitle: "Crafty Mind Studio | Handcrafted with Love",
@@ -21,7 +21,7 @@ export const siteConfig = {
   ],
   author: {
     name: "Crafty Mind Studio Team",
-    url: "https://craftymindstudio.in"
+    url: "https://www.craftymindstudio.in"
   }
 };
 
