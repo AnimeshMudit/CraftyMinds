@@ -25,6 +25,7 @@ export interface Order {
   order_status: "pending" | "processing" | "shipped" | "delivered";
   razorpay_payment_id: string | null;
   razorpay_order_id: string | null;
+  payment_confirmation_sent_at?: string | null;
   updated_at?: string;
   user_id?: string | null;
 }

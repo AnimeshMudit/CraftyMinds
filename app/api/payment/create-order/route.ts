@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -59,7 +60,31 @@ export async function POST(req: NextRequest) {
 
     const razorpayOrder = await razorpay.orders.create(options);
 
-    // 6. Return JSON response
+    // 6. Persist razorpay_order_id to Supabase orders table immediately
+    try {
+      const supabase = createServerSupabaseClient();
+      let updateQuery = supabase
+        .from("orders")
+        .update({
+          razorpay_order_id: razorpayOrder.id,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (orderId.startsWith("CM-")) {
+        updateQuery = updateQuery.eq("order_number", orderId);
+      } else {
+        updateQuery = updateQuery.eq("id", orderId);
+      }
+
+      const { error: updateError } = await updateQuery;
+      if (updateError) {
+        console.warn("[Payment Create-Order] Could not immediately persist razorpay_order_id:", updateError.message);
+      }
+    } catch (dbErr) {
+      console.warn("[Payment Create-Order] Non-fatal DB error persisting razorpay_order_id:", dbErr);
+    }
+
+    // 7. Return JSON response
     return NextResponse.json({
       success: true,
       razorpayOrderId: razorpayOrder.id,
