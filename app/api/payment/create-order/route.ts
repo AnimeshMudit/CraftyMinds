@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Razorpay from "razorpay";
+import { getRazorpayServerClient } from "@/lib/payment/razorpay";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
@@ -23,27 +23,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
     const publicKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-
-    if (!keyId || !keySecret) {
-      console.error("Missing server-side Razorpay API credentials.");
-      return NextResponse.json(
-        { success: false, error: "Razorpay credentials are not configured on the server." },
-        { status: 500 }
-      );
-    }
-
     if (!publicKey) {
       throw new Error("Missing NEXT_PUBLIC_RAZORPAY_KEY_ID.");
     }
 
     // 3. Initialize Razorpay
-    const razorpay = new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret,
-    });
+    const razorpay = getRazorpayServerClient();
 
     // 4. Convert amount to paise (1 Rupee = 100 Paise)
     const amountInPaise = Math.round(amount * 100);
