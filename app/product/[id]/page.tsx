@@ -96,6 +96,8 @@ async function ProductDetailsContent({ params }: ProductPageProps) {
         return "Clean with a dry cloth. Do not drop on hard surfaces as clay or pine slices can chip. Store in a dry place away from direct moisture.";
       case "rakhis":
         return "Keep dry. Avoid contact with water, perfume, or chemicals. Store in the provided pouch to prevent thread tangling and preserve paint details.";
+      case "crochet":
+        return "Gentle hand wash with mild detergent in cold water. Do not wring or twist. Dry flat in shade to maintain shape. Avoid sharp objects that may pull the yarn.";
       default:
         return "Handle with care as this is an original hand-painted creation. Clean with a soft, dry cloth. Keep away from direct moisture and water.";
     }
@@ -105,7 +107,7 @@ async function ProductDetailsContent({ params }: ProductPageProps) {
   const productSchema = generateProductSchema(product);
 
   const categoryPath = product.category === "pouch" ? "/pouches" : product.category === "magnet" ? "/magnets" : `/${product.category}`;
-  const categoryName = product.category === "mdf" ? "MDF Arts" : product.category === "pouch" ? "Hand-painted Pouches" : product.category === "rakhis" ? "Handmade Rakhis" : "Fridge Magnets";
+  const categoryName = product.category === "mdf" ? "MDF Arts" : product.category === "pouch" ? "Hand-painted Pouches" : product.category === "rakhis" ? "Handmade Rakhis" : product.category === "crochet" ? "Crochet" : "Fridge Magnets";
 
   const breadcrumbsSchema = generateBreadcrumbSchema([
     { name: "Home", item: siteConfig.url },
@@ -129,11 +131,11 @@ async function ProductDetailsContent({ params }: ProductPageProps) {
         
         {/* Back Link */}
         <Link
-          href={product.category === "pouch" ? "/pouches" : product.category === "magnet" ? "/magnets" : `/${product.category}`}
+          href={categoryPath}
           className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-foreground/50 hover:text-accent font-medium mb-6 md:mb-10 transition-colors duration-300 group"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-          <span>Back to {product.category === "mdf" ? "MDF Arts" : product.category === "pouch" ? "Hand-painted Pouches" : product.category === "rakhis" ? "Handmade Rakhis" : "Fridge Magnets"}</span>
+          <span>Back to {categoryName}</span>
         </Link>
 
         {/* Product Details Grid */}
@@ -151,7 +153,7 @@ async function ProductDetailsContent({ params }: ProductPageProps) {
             <div className="space-y-3 order-1 lg:order-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-widest text-accent font-semibold">
-                  {product.category === "mdf" ? "MDF Board Art" : product.category === "pouch" ? "Hand-painted Pouch" : product.category === "rakhis" ? "Handmade Rakhi" : "Fridge Magnet"}
+                  {product.category === "mdf" ? "MDF Board Art" : product.category === "pouch" ? "Hand-painted Pouch" : product.category === "rakhis" ? "Handmade Rakhi" : product.category === "crochet" ? "Crochet" : "Fridge Magnet"}
                 </span>
                 <span className="text-[9px] text-foreground/40">•</span>
                 <span className="text-[10px] uppercase tracking-wider text-accent-secondary font-medium">

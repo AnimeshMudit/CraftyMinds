@@ -58,6 +58,8 @@ export default function CartItem({ item }: CartItemProps) {
                 ? "Pouch"
                 : product.category === "rakhis"
                 ? "Rakhi"
+                : product.category === "crochet"
+                ? "Crochet"
                 : "Magnet"}
             </span>
           </div>

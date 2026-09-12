@@ -16,6 +16,7 @@ const navLinks = [
   { href: "/pouches", label: "Pouches" },
   { href: "/magnets", label: "Magnets" },
   { href: "/rakhis", label: "Rakhis" },
+  { href: "/crochet", label: "Crochet" },
   { href: "/track-order", label: "Track Order" },
 ];
 

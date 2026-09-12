@@ -7,7 +7,6 @@ import AboutSection from "@/components/AboutSection";
 import CategoryCard from "@/components/CategoryCard";
 import WhyHandmade from "@/components/WhyHandmade";
 import HowItWorks from "@/components/HowItWorks";
-import Testimonials from "@/components/Testimonials";
 import CTASection from "@/components/CTASection";
 
 export default function Home() {
@@ -35,6 +34,12 @@ export default function Home() {
       description: "Celebrate the sacred sibling bond with handcrafted designer rakhis made from premium threads, delicate beads, and crochet.",
       imageSrc: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1785334975837_1000230095.jpg",
       href: "/rakhis",
+    },
+    {
+      title: "Crochet",
+      description: "Beautifully handcrafted crochet creations made with love and attention to detail.",
+      imageSrc: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1785334975837_1000230095.jpg",
+      href: "/crochet",
     },
   ];
 

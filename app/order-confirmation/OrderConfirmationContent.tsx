@@ -257,6 +257,8 @@ export default function OrderConfirmationContent({ orderNumber }: OrderConfirmat
                               ? "Pouches" 
                               : item.product.category === "magnet" 
                               ? "Fridge Magnets" 
+                              : item.product.category === "crochet"
+                              ? "Crochet"
                               : "Handmade Rakhis"}
                           </p>
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground/60">

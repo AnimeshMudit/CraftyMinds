@@ -42,7 +42,7 @@ export default function TermsAndConditionsPage() {
             1. Handcrafted Product Variations
           </h3>
           <p>
-            All products listed in our store (including MDF art plaques, canvas pouches, clay magnets, and rakhis) are hand-painted, stitched, or hand-sculpted by our artists. 
+            All products listed in our store (including MDF art plaques, canvas pouches, clay magnets, rakhis, and crochet creations) are hand-painted, stitched, or hand-sculpted by our artists. 
           </p>
           <p className="mt-2 font-medium text-slate-700">
             Due to this handcrafted production process, there may be minor variations in color, brush strokes, textures, or sizes compared to the product photos shown on our website. These variations are not defects; they are the natural hallmark of handmade creations and ensure that every item you purchase is a unique piece of art.

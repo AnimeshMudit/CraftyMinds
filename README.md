@@ -1,6 +1,6 @@
 # Crafty Mind Studio
 
-A premium Next.js e-commerce storefront for handcrafted arts (MDF Arts, Pouches, Magnets, and Rakhis). Built with Next.js, Tailwind CSS, Supabase, and Razorpay.
+A premium Next.js e-commerce storefront for handcrafted arts (MDF Arts, Pouches, Magnets, Rakhis, and Crochet). Built with Next.js, Tailwind CSS, Supabase, and Razorpay.
 
 ## Features
 - **Storefront**: Premium, dynamic catalog filtering and product detail views.

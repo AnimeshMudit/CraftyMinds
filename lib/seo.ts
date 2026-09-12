@@ -13,6 +13,8 @@ export const siteConfig = {
     "hand-painted pouches",
     "fridge magnets",
     "handmade Rakhis",
+    "crochet creations",
+    "amigurumi",
     "home decor India",
     "artisan shop",
     "handcrafted gifts",

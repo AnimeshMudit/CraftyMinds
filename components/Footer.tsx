@@ -55,6 +55,11 @@ export default function Footer() {
                 Handmade Rakhis
               </Link>
             </li>
+            <li>
+              <Link href="/crochet" className="hover:text-accent transition-colors duration-300 active:scale-[0.98] active:opacity-80 inline-block">
+                Crochet
+              </Link>
+            </li>
           </ul>
         </div>
 

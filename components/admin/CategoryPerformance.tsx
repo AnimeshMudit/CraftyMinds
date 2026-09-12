@@ -23,6 +23,8 @@ export default function CategoryPerformance({ categories }: CategoryPerformanceP
         return "bg-rose-500";
       case "Rakhis":
         return "bg-emerald-500";
+      case "Crochet":
+        return "bg-indigo-500";
       default:
         return "bg-slate-500";
     }

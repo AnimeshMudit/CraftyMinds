@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Crafty Mind Studio — a Next.js (App Router) e-commerce storefront for handcrafted arts (MDF Arts, Pouches, Magnets, Rakhis). Stack: Next.js 15 / React 19, Tailwind CSS 4, Supabase (Postgres + Auth + Storage), Razorpay payments, Resend transactional email.
+Crafty Mind Studio — a Next.js (App Router) e-commerce storefront for handcrafted arts (MDF Arts, Pouches, Magnets, Rakhis, Crochet). Stack: Next.js 15 / React 19, Tailwind CSS 4, Supabase (Postgres + Auth + Storage), Razorpay payments, Resend transactional email.
 
 ## Commands
 
@@ -50,7 +50,7 @@ There are **two separate, non-overlapping session mechanisms** — do not mix th
 
 ### Products
 
-`types/product.ts` defines `category` as a closed union: `"mdf" | "pouch" | "magnet" | "rakhis"`. The `mdf`/`pouches`/`magnets`/`rakhis` routes under `app/` are per-category storefront pages driven by this field. `specifications` is stored as JSON in Supabase and normalized to an array by `parseProduct()` in `products-server.ts`/`products.ts` — always go through those helpers rather than querying `products` directly, since raw rows may have `specifications` as a string.
+`types/product.ts` defines `category` as a closed union: `"mdf" | "pouch" | "magnet" | "rakhis" | "crochet"`. The `mdf`/`pouches`/`magnets`/`rakhis`/`crochet` routes under `app/` are per-category storefront pages driven by this field. `specifications` is stored as JSON in Supabase and normalized to an array by `parseProduct()` in `products-server.ts`/`products.ts` — always go through those helpers rather than querying `products` directly, since raw rows may have `specifications` as a string.
 
 ### Admin area
 

@@ -9,7 +9,7 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 export default function Hero() {
   const [showcaseState, setShowcaseState] = React.useState({
     visible: [0, 1, 2],
-    hidden: 3,
+    hidden: [3, 4],
   });
   const [isHovered, setIsHovered] = React.useState(false);
 
@@ -19,12 +19,14 @@ export default function Hero() {
       const frameToReplace = Math.floor(Math.random() * 3);
       setShowcaseState((prev) => {
         const nextVisible = [...prev.visible];
-        const currentHidden = prev.hidden;
+        const currentHidden = [...prev.hidden];
         const replaced = nextVisible[frameToReplace];
-        nextVisible[frameToReplace] = currentHidden;
+        const nextToShow = currentHidden.shift()!;
+        nextVisible[frameToReplace] = nextToShow;
+        currentHidden.push(replaced);
         return {
           visible: nextVisible,
-          hidden: replaced,
+          hidden: currentHidden,
         };
       });
     }, 10000); // 10 seconds interval
@@ -62,6 +64,14 @@ export default function Hero() {
       src: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1785334975837_1000230095.jpg",
       alt: "Handcrafted Designer Rakhis made with silk threads and beads",
       label: "Rakhis",
+      priority: false,
+      sizes: "(max-width: 768px) 35vw, 18vw",
+    },
+    {
+      id: 4,
+      src: "https://buswdznodxyugbipflnc.supabase.co/storage/v1/object/public/product-images/1785334975837_1000230095.jpg",
+      alt: "Handmade Crochet Creations",
+      label: "Crochet",
       priority: false,
       sizes: "(max-width: 768px) 35vw, 18vw",
     },

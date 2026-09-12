@@ -50,6 +50,12 @@ export default function CartPage() {
               <Link href="/pouches" className="p-2.5 border border-border-custom rounded-xl hover:bg-white hover:text-accent transition-colors text-center cursor-pointer">
                 Pouches
               </Link>
+              <Link href="/magnets" className="p-2.5 border border-border-custom rounded-xl hover:bg-white hover:text-accent transition-colors text-center cursor-pointer">
+                Magnets
+              </Link>
+              <Link href="/crochet" className="p-2.5 border border-border-custom rounded-xl hover:bg-white hover:text-accent transition-colors text-center cursor-pointer">
+                Crochet
+              </Link>
             </div>
           </div>
         </div>

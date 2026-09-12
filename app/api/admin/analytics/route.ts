@@ -121,7 +121,8 @@ export async function GET() {
       mdf: 0,
       pouch: 0,
       magnet: 0,
-      rakhis: 0
+      rakhis: 0,
+      crochet: 0
     };
 
     let totalPaidItemRevenue = 0;
@@ -153,6 +154,7 @@ export async function GET() {
       else if (cat === "pouch") label = "Pouches";
       else if (cat === "magnet") label = "Magnets";
       else if (cat === "rakhis") label = "Rakhis";
+      else if (cat === "crochet") label = "Crochet";
       
       return {
         category: label,

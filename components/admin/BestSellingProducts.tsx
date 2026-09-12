@@ -42,7 +42,7 @@ export default function BestSellingProducts({ products }: BestSellingProductsPro
                     </p>
                   </div>
                   <span className="capitalize text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 ml-7">
-                    {item.category === "mdf" ? "MDF Art" : item.category === "pouch" ? "Pouch" : item.category === "rakhis" ? "Rakhi" : "Magnet"}
+                    {item.category === "mdf" ? "MDF Art" : item.category === "pouch" ? "Pouch" : item.category === "rakhis" ? "Rakhi" : item.category === "crochet" ? "Crochet" : "Magnet"}
                   </span>
                 </div>
                 <div className="text-right shrink-0 space-y-0.5">

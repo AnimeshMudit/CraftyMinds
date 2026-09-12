@@ -18,6 +18,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
   const pouchCount = products.filter((p) => p.category === "pouch").length;
   const magnetCount = products.filter((p) => p.category === "magnet").length;
   const rakhiCount = products.filter((p) => p.category === "rakhis").length;
+  const crochetCount = products.filter((p) => p.category === "crochet").length;
 
   const filteredProducts =
     selectedCategory === "all"
@@ -74,6 +75,16 @@ export default function DashboardClient({ products }: DashboardClientProps) {
       activeBorder: "border-emerald-500",
       activeBg: "bg-emerald-500/[0.04]",
       activeRing: "focus:ring-emerald-500/40",
+    },
+    {
+      id: "crochet",
+      title: "Crochet",
+      value: crochetCount,
+      icon: Gift,
+      color: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20",
+      activeBorder: "border-indigo-500",
+      activeBg: "bg-indigo-500/[0.04]",
+      activeRing: "focus:ring-indigo-500/40",
     },
   ];
 
@@ -154,6 +165,8 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                       ? "Hand-painted Pouches"
                       : selectedCategory === "rakhis"
                       ? "Handmade Rakhis"
+                      : selectedCategory === "crochet"
+                      ? "Crochet"
                       : "Fridge Magnets"
                   }`}
             </h2>
@@ -214,6 +227,8 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                             ? "Pouch"
                             : product.category === "rakhis"
                             ? "Rakhi"
+                            : product.category === "crochet"
+                            ? "Crochet"
                             : "Magnet"}
                         </span>
                       </td>
@@ -270,7 +285,7 @@ export default function DashboardClient({ products }: DashboardClientProps) {
                     </span>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="capitalize text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                        {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : product.category === "rakhis" ? "Rakhi" : "Magnet"}
+                        {product.category === "mdf" ? "MDF Art" : product.category === "pouch" ? "Pouch" : product.category === "rakhis" ? "Rakhi" : product.category === "crochet" ? "Crochet" : "Magnet"}
                       </span>
                       {product.featured && (
                         <span className="inline-block text-[9px] uppercase tracking-wider bg-amber-500/10 text-amber-700 font-semibold px-1.5 py-0.5 rounded-sm">
