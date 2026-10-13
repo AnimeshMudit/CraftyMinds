@@ -1,7 +1,9 @@
 import React, { Suspense } from "react";
 import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
+import ProductSort from "@/components/ProductSort";
 import { ProductCardSkeleton } from "@/components/Skeletons";
+import { SortOption, getValidSortOption, sortProducts } from "@/lib/utils/product-sort";
 
 import { getCanonicalUrl, siteConfig } from "@/lib/seo";
 import { generateBreadcrumbSchema } from "@/lib/schema";
@@ -23,7 +25,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MdfCategoryPage() {
+interface CategoryPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function MdfCategoryPage({ searchParams }: CategoryPageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const currentSort = getValidSortOption(resolvedParams?.sort);
+
   const breadcrumbsSchema = generateBreadcrumbSchema([
     { name: "Home", item: siteConfig.url },
     { name: "MDF Board Arts", item: `${siteConfig.url}/mdf` },
@@ -49,6 +58,11 @@ export default function MdfCategoryPage() {
           </p>
         </div>
 
+        {/* Toolbar: Sort */}
+        <div className="flex items-center justify-end mb-6 md:mb-8">
+          <ProductSort currentSort={currentSort} />
+        </div>
+
         {/* Product Grid inside Suspense */}
         <Suspense fallback={
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-10">
@@ -57,7 +71,7 @@ export default function MdfCategoryPage() {
             ))}
           </div>
         }>
-          <MdfProductsContent />
+          <MdfProductsContent sort={currentSort} />
         </Suspense>
 
       </div>
@@ -65,8 +79,9 @@ export default function MdfCategoryPage() {
   );
 }
 
-async function MdfProductsContent() {
+async function MdfProductsContent({ sort }: { sort: SortOption }) {
   const allProducts = await getProductsServer();
   const mdfProducts = allProducts.filter((p) => p.category === "mdf");
-  return <ProductGrid products={mdfProducts} />;
+  const sortedProducts = sortProducts(mdfProducts, sort);
+  return <ProductGrid products={sortedProducts} />;
 }

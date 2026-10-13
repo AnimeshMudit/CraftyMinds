@@ -1,7 +1,9 @@
 import React, { Suspense } from "react";
 import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
+import ProductSort from "@/components/ProductSort";
 import { ProductCardSkeleton } from "@/components/Skeletons";
+import { SortOption, getValidSortOption, sortProducts } from "@/lib/utils/product-sort";
 
 import { getCanonicalUrl, siteConfig } from "@/lib/seo";
 import { generateBreadcrumbSchema } from "@/lib/schema";
@@ -23,7 +25,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CrochetCategoryPage() {
+interface CategoryPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function CrochetCategoryPage({ searchParams }: CategoryPageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const currentSort = getValidSortOption(resolvedParams?.sort);
+
   const breadcrumbsSchema = generateBreadcrumbSchema([
     { name: "Home", item: siteConfig.url },
     { name: "Crochet", item: `${siteConfig.url}/crochet` },
@@ -49,6 +58,11 @@ export default function CrochetCategoryPage() {
           </p>
         </div>
 
+        {/* Toolbar: Sort */}
+        <div className="flex items-center justify-end mb-6 md:mb-8">
+          <ProductSort currentSort={currentSort} />
+        </div>
+
         {/* Product Grid inside Suspense */}
         <Suspense fallback={
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-10">
@@ -57,7 +71,7 @@ export default function CrochetCategoryPage() {
             ))}
           </div>
         }>
-          <CrochetProductsContent />
+          <CrochetProductsContent sort={currentSort} />
         </Suspense>
 
       </div>
@@ -65,8 +79,9 @@ export default function CrochetCategoryPage() {
   );
 }
 
-async function CrochetProductsContent() {
+async function CrochetProductsContent({ sort }: { sort: SortOption }) {
   const allProducts = await getProductsServer();
   const crochetProducts = allProducts.filter((p) => p.category === "crochet");
-  return <ProductGrid products={crochetProducts} />;
+  const sortedProducts = sortProducts(crochetProducts, sort);
+  return <ProductGrid products={sortedProducts} />;
 }

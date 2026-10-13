@@ -1,7 +1,9 @@
 import React, { Suspense } from "react";
 import { getProductsServer } from "@/lib/supabase/products-server";
 import ProductGrid from "@/components/ProductGrid";
+import ProductSort from "@/components/ProductSort";
 import { ProductCardSkeleton } from "@/components/Skeletons";
+import { SortOption, getValidSortOption, sortProducts } from "@/lib/utils/product-sort";
 
 import { getCanonicalUrl, siteConfig } from "@/lib/seo";
 import { generateBreadcrumbSchema } from "@/lib/schema";
@@ -23,7 +25,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MagnetsCategoryPage() {
+interface CategoryPageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function MagnetsCategoryPage({ searchParams }: CategoryPageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const currentSort = getValidSortOption(resolvedParams?.sort);
+
   const breadcrumbsSchema = generateBreadcrumbSchema([
     { name: "Home", item: siteConfig.url },
     { name: "Fridge Magnets", item: `${siteConfig.url}/magnets` },
@@ -49,6 +58,11 @@ export default function MagnetsCategoryPage() {
           </p>
         </div>
 
+        {/* Toolbar: Sort */}
+        <div className="flex items-center justify-end mb-6 md:mb-8">
+          <ProductSort currentSort={currentSort} />
+        </div>
+
         {/* Product Grid inside Suspense */}
         <Suspense fallback={
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-10">
@@ -57,7 +71,7 @@ export default function MagnetsCategoryPage() {
             ))}
           </div>
         }>
-          <MagnetsProductsContent />
+          <MagnetsProductsContent sort={currentSort} />
         </Suspense>
 
       </div>
@@ -65,8 +79,9 @@ export default function MagnetsCategoryPage() {
   );
 }
 
-async function MagnetsProductsContent() {
+async function MagnetsProductsContent({ sort }: { sort: SortOption }) {
   const allProducts = await getProductsServer();
   const magnetProducts = allProducts.filter((p) => p.category === "magnet");
-  return <ProductGrid products={magnetProducts} />;
+  const sortedProducts = sortProducts(magnetProducts, sort);
+  return <ProductGrid products={sortedProducts} />;
 }
